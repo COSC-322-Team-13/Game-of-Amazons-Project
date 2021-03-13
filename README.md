@@ -1,5 +1,5 @@
-## Game-of-Amazons-Project
+# Game-of-Amazons-Project
 
 Amazon class for game rules etc  
 General class for bot  
-# Implement moving  
+### Implement moving  
