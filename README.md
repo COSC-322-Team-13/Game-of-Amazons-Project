@@ -2,4 +2,4 @@
 
 Amazon class for game rules etc  
 General class for bot  
-[Implement moving]  
+**Implement movement
