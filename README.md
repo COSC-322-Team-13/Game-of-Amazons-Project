@@ -2,5 +2,5 @@
 
 Amazon class for game rules etc  
 General class for bot  
-**Implement moving**
-Search function
+**Implement moving**  
+Search function  
