@@ -81,20 +81,27 @@ public class COSC322Test extends GamePlayer{
 	
     	//For a detailed description of the message types and format, 
     	//see the method GamePlayer.handleGameMessage() in the game-client-api document. 
-
+    	if(messageType.equals(GameMessage.GAME_ACTION_START)) {
+    		
+    		boolean isWhite = msgDetails.get("player-white").equals(this.userName());
+        	System.out.println(isWhite ? "white" : "black");
+    		
+    	}
 
     	if(messageType.equals(GameMessage.GAME_STATE_BOARD))
     		gamegui.setGameState((ArrayList <Integer>)msgDetails.get("game-state"));
-    	if(messageType.equals(GameMessage.GAME_ACTION_MOVE)) {
-    		
-    		//TODO?
+    	if(messageType.equals(GameMessage.GAME_ACTION_MOVE))
     		gamegui.updateGameState(msgDetails);
     		
-    	}
     	
     	return true;   	
     }
     
+    public void myTurn() {
+    	
+    	
+    	
+    }
     
     @Override
     public String userName() {

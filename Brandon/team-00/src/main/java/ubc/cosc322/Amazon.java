@@ -12,13 +12,7 @@ import ygraph.ai.smartfox.games.GamePlayer;
 import ygraph.ai.smartfox.games.amazons.AmazonsGameMessage;
 
 public class Amazon {
-
-	public GameMessage playerMove() {
-		
-		GameMessage moveMsg = new GameMessage(GameMessage.GAME_ACTION_MOVE);
-		
-		return moveMsg;
-		
-	}
+	
+	
 	
 }
