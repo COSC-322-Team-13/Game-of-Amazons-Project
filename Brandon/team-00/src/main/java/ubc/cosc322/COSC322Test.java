@@ -64,10 +64,10 @@ public class COSC322Test extends GamePlayer{
 
     @Override
     public void onLogin() {
-    	System.out.println("Congratualations!!! "
-    			+ "I am called because the server indicated that the login is successfully");
-    	System.out.println("The next step is to find a room and join it: "
-    			+ "the gameClient instance created in my constructor knows how!"); 
+    	//System.out.println("Congratualations!!! "
+    	//		+ "I am called because the server indicated that the login is successfully");
+    	//System.out.println("The next step is to find a room and join it: "
+    	//		+ "the gameClient instance created in my constructor knows how!"); 
     	userName = gameClient.getUserName();
     	if(gamegui != null)
     		gamegui.setRoomInformation(gameClient.getRoomList());
@@ -83,11 +83,29 @@ public class COSC322Test extends GamePlayer{
     	//see the method GamePlayer.handleGameMessage() in the game-client-api document. 
     	if(messageType.equals(GameMessage.GAME_ACTION_START)) {
     		
-    		boolean isWhite = msgDetails.get("player-white").equals(this.userName());
-        	System.out.println(isWhite ? "white" : "black");
+    		System.out.println("This is a test, we received GAME_ACTION_START " +
+    				"and we will find out if we received WHITE or BLACK so we know which " +
+    				"pieces to move");
+    		
+    		boolean isWhite = msgDetails.get("player-white").equals(this.userName);
+    		System.out.println(isWhite);
+    		
+    		if(isWhite) {
+    			
+    			Agent agent = new Agent(true);
+    			
+    		}
+    		
+    		else if(!isWhite) {
+    			
+    			Agent agent = new Agent(false);
+    			
+    		}
     		
     	}
-
+    	
+    	
+    	
     	if(messageType.equals(GameMessage.GAME_STATE_BOARD))
     		gamegui.setGameState((ArrayList <Integer>)msgDetails.get("game-state"));
     	if(messageType.equals(GameMessage.GAME_ACTION_MOVE))

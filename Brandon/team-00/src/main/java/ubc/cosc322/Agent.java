@@ -14,7 +14,7 @@ public class Agent {
 	
 	GamePlayer boardatm;
 	
-	public Agent() {
+	public Agent(boolean isWhite) {
 		
 		
 		
