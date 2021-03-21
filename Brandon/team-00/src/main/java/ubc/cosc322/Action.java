@@ -13,13 +13,13 @@ import java.util.*;
 public class Action {
 
 	// Define position of projectile, initial position of queen, final position of queen
-	private ArrayList<String> shot;
-	private ArrayList<String> qi;
-	private ArrayList<String> qf;
+	private ArrayList<Integer> shot;
+	private ArrayList<Integer> qi;
+	private ArrayList<Integer> qf;
 	
 	
 	// Constructor. Initialize private variables
-	public Action(ArrayList<String> shot, ArrayList<String> qi, ArrayList<String> qf) {
+	public Action(ArrayList<Integer> shot, ArrayList<Integer> qi, ArrayList<Integer> qf) {
 		
 		this.shot = shot;
 		this.qi = qi;

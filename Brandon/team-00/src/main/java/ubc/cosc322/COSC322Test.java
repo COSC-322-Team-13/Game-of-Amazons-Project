@@ -81,11 +81,16 @@ public class COSC322Test extends GamePlayer{
 	
     	//For a detailed description of the message types and format, 
     	//see the method GamePlayer.handleGameMessage() in the game-client-api document. 
+    	
+    	// THIS PART WORKS! JUST HARD TO CHECK CAUSE NEED GAME TO ACTUALLY START
+    	// I.E., NEED TWO PEOPLE IN ROOM.
+    	// I checked to make sure works for white and black, it does. We get a true and a false,
+    	// so it is working as intended and we can play the game based on our piece colour.
     	if(messageType.equals(GameMessage.GAME_ACTION_START)) {
     		
     		System.out.println("This is a test, we received GAME_ACTION_START " +
-    				"and we will find out if we received WHITE or BLACK so we know which " +
-    				"pieces to move");
+    				"and we will find out if we received WHITE or BLACK" + '\n' + "so we know which " +
+    				"pieces to move. We will now print out TRUE or FALSE for isWhite");
     		
     		boolean isWhite = msgDetails.get("player-white").equals(this.userName);
     		System.out.println(isWhite);
@@ -115,9 +120,13 @@ public class COSC322Test extends GamePlayer{
     	return true;   	
     }
     
-    public void myTurn() {
+    public void myTurn(Action action) {
     	
+    	//iniQPos
+    	//finQPos
+    	//arrowPos
     	
+    	// gameClient.sendMoveMessage(iniQPos, finQPos, arrowPos);
     	
     }
     

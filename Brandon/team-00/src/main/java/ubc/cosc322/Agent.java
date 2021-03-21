@@ -12,16 +12,19 @@ import java.util.*;
 // TODO general utility class for agent
 public class Agent {
 	
-	GamePlayer boardatm;
+	boolean isWhite;
 	
+	// create a new agent, based on the colour of the pieces
 	public Agent(boolean isWhite) {
 		
-		
+		this.isWhite = isWhite;
 		
 	}
 	
 	// TODO pick a move at random for now
-	
+	// will be good enough for quick group stage stuff unless we have time and
+	// can do some basic strategy
+	// also remember TIMEOUT of 30s for the game
 	public Action chooseAction() {
 		
 		// init
@@ -30,18 +33,36 @@ public class Agent {
 		
 		// populate with random move
 		
-		ArrayList<String> initialPos = new ArrayList<String>();
-		ArrayList<String> finalPos = new ArrayList<String>();
-		ArrayList<String> shotPos = new ArrayList<String>();
-		initialPos.add(AmazonsGameMessage.QUEEN_POS_CURR);
-		finalPos.add(AmazonsGameMessage.Queen_POS_NEXT);
-		shotPos.add(AmazonsGameMessage.ARROW_POS);
+		do {
+			
+			ArrayList<Integer> initialPos = new ArrayList<Integer>();
+			ArrayList<Integer> finalPos = new ArrayList<Integer>();
+			ArrayList<Integer> shotPos = new ArrayList<Integer>();
+			
+			// choose a random queen to move
+			initialPos.add(randomNumber.nextInt(AmazonsGameMessage.QUEEN_POS_CURR.length()));
+			
+			// choose a random space to move to
+			// random place to fire arrow at
+			
+			finalPos.add(randomNumber.nextInt(8), randomNumber.nextInt(8));
+			shotPos.add(randomNumber.nextInt(8), randomNumber.nextInt(8));
+			
+			action = new Action(shotPos, initialPos, finalPos);
+			
+			return action;
+			
+		}
 		
-		// make the chosen action
-		action = new Action(shotPos, initialPos, finalPos);
+		// change this later
+		while(true);
 		
-		// return the chosen action to whoever called
-		return action;
+		// might have to do something about getting the correctly coloured piece
+		// as well as the specific piece we want to move
+		
+		//initialPos.add(AmazonsGameMessage.QUEEN_POS_CURR);
+		//finalPos.add(AmazonsGameMessage.Queen_POS_NEXT);
+		//shotPos.add(AmazonsGameMessage.ARROW_POS);
 		
 	}
 	
