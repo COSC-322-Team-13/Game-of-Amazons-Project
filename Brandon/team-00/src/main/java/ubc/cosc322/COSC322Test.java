@@ -142,21 +142,25 @@ public class COSC322Test extends GamePlayer{
     public void myTurn(Action action) {
     	
     	ArrayList<Integer> iniQPos = new ArrayList<Integer>();
+    	int queenindex;
     	
     	if(isWhite) {
     		
+    		queenindex = (int) Math.random()*4+4;
     		iniQPos = board.getSpecificQueenPos((int)(Math.random()*4 + 4));
     		
     	}
     	
     	else {
     		
+    		queenindex = (int) Math.random()*4;
     		iniQPos = board.getSpecificQueenPos((int)(Math.random()*4));
     		
     	}
     	
     	System.out.println(iniQPos);
     	ArrayList<Integer> finQPos = action.getqf();
+    	board.setSpecificQueenPos(finQPos.get(0), finQPos.get(1), queenindex);
     	ArrayList<Integer> arrowPos = action.getShot();
     	
     	System.out.println("MY MOVE IS BEING SENT");
