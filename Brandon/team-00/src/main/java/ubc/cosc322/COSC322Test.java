@@ -122,11 +122,11 @@ public class COSC322Test extends GamePlayer{
     
     public void myTurn(Action action) {
     	
-    	//iniQPos
-    	//finQPos
-    	//arrowPos
+    	ArrayList<Integer> iniQPos = action.getqi();
+    	ArrayList<Integer> finQPos = action.getqf();
+    	ArrayList<Integer> arrowPos = action.getShot();
     	
-    	// gameClient.sendMoveMessage(iniQPos, finQPos, arrowPos);
+    	gameClient.sendMoveMessage(iniQPos, finQPos, arrowPos);
     	
     }
     

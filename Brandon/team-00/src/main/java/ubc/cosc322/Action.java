@@ -27,4 +27,22 @@ public class Action {
 		
 	}
 	
+	public ArrayList<Integer> getqi() {
+		
+		return qi;
+		
+	}
+	
+	public ArrayList<Integer> getqf() {
+		
+		return qf;
+		
+	}
+	
+	public ArrayList<Integer> getShot() {
+		
+		return shot;
+		
+	}
+	
 }

@@ -45,8 +45,8 @@ public class Agent {
 			// choose a random space to move to
 			// random place to fire arrow at
 			
-			finalPos.add(randomNumber.nextInt(8), randomNumber.nextInt(8));
-			shotPos.add(randomNumber.nextInt(8), randomNumber.nextInt(8));
+			finalPos.add(randomNumber.nextInt(10), randomNumber.nextInt(10));
+			shotPos.add(randomNumber.nextInt(10), randomNumber.nextInt(10));
 			
 			action = new Action(shotPos, initialPos, finalPos);
 			
