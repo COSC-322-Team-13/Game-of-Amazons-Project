@@ -1,6 +1,7 @@
 package ubc.cosc322;
 
 import java.util.List;
+
 import java.util.Map;
 import java.util.ArrayList;
 
@@ -25,6 +26,10 @@ public class COSC322Test extends GamePlayer{
     private String userName = null;
     private String passwd = null;
  
+    private Agent agent;
+    private boolean isWhite;
+    
+    public static CurrentBoard board = new CurrentBoard();
 	
     /**
      * The main method
@@ -73,7 +78,7 @@ public class COSC322Test extends GamePlayer{
     		gamegui.setRoomInformation(gameClient.getRoomList());
     	
     }
-
+    
     @Override
     public boolean handleGameMessage(String messageType, Map<String, Object> msgDetails) {
     	//This method will be called by the GameClient when it receives a game-related message
@@ -88,28 +93,41 @@ public class COSC322Test extends GamePlayer{
     	// so it is working as intended and we can play the game based on our piece colour.
     	if(messageType.equals(GameMessage.GAME_ACTION_START)) {
     		
+    		
     		System.out.println("This is a test, we received GAME_ACTION_START " +
     				"and we will find out if we received WHITE or BLACK" + '\n' + "so we know which " +
     				"pieces to move. We will now print out TRUE or FALSE for isWhite");
     		
-    		boolean isWhite = msgDetails.get("player-white").equals(this.userName);
+    		isWhite = msgDetails.get("player-white").equals(this.userName);
     		System.out.println(isWhite);
     		
     		if(isWhite) {
     			
-    			Agent agent = new Agent(true);
+    			agent = new Agent(true);
+    			//myTurn(agent.chooseAction());
     			
     		}
     		
     		else if(!isWhite) {
     			
-    			Agent agent = new Agent(false);
+    			agent = new Agent(false);
+    			myTurn(agent.chooseAction());
     			
     		}
     		
     	}
     	
-    	
+    	// denotes the enemy player just made a move, so we 
+    	// need to handle that and then move on to our turn
+    	if(messageType.equals(GameMessage.GAME_ACTION_MOVE)) {
+    		
+    		System.out.println("ENEMY JUST MADE A MOVE");
+    		
+    		//Agent agent = new Agent(isWhite);
+    		// might be the case that we can play right after enemy?
+    		myTurn(agent.chooseAction());
+    		
+    	}
     	
     	if(messageType.equals(GameMessage.GAME_STATE_BOARD))
     		gamegui.setGameState((ArrayList <Integer>)msgDetails.get("game-state"));
@@ -118,17 +136,35 @@ public class COSC322Test extends GamePlayer{
     		
     	
     	return true;   	
+    	
     }
     
     public void myTurn(Action action) {
     	
-    	ArrayList<Integer> iniQPos = action.getqi();
+    	ArrayList<Integer> iniQPos = new ArrayList<Integer>();
+    	
+    	if(isWhite) {
+    		
+    		iniQPos = board.getSpecificQueenPos((int)(Math.random()*4 + 4));
+    		
+    	}
+    	
+    	else {
+    		
+    		iniQPos = board.getSpecificQueenPos((int)(Math.random()*4));
+    		
+    	}
+    	
+    	System.out.println(iniQPos);
     	ArrayList<Integer> finQPos = action.getqf();
     	ArrayList<Integer> arrowPos = action.getShot();
     	
+    	System.out.println("MY MOVE IS BEING SENT");
+    	System.out.println(iniQPos + " " + finQPos + " " + arrowPos);
     	gameClient.sendMoveMessage(iniQPos, finQPos, arrowPos);
-    	
+    	System.out.println("MY MOVE WAS MADE");
     }
+   
     
     @Override
     public String userName() {

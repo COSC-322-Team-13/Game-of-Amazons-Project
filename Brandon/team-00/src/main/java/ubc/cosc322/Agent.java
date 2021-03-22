@@ -33,29 +33,32 @@ public class Agent {
 		
 		// populate with random move
 		
-		do {
+		//do {
 			
-			ArrayList<Integer> initialPos = new ArrayList<Integer>();
-			ArrayList<Integer> finalPos = new ArrayList<Integer>();
-			ArrayList<Integer> shotPos = new ArrayList<Integer>();
+		ArrayList<Integer> initialPos = new ArrayList<Integer>();
+		ArrayList<Integer> finalPos = new ArrayList<Integer>();
+		ArrayList<Integer> shotPos = new ArrayList<Integer>();
+		
+		// choose a random queen to move
+		// CHECK EVERY TILE FOR QUEEN, CHECK COLOUR OF QUEEN, PICK AT RANDOM
+		
+		
+		// choose a random space to move to and a
+		// random place to fire arrow at
 			
-			// choose a random queen to move
-			initialPos.add(randomNumber.nextInt(AmazonsGameMessage.QUEEN_POS_CURR.length()));
+		finalPos.add(randomNumber.nextInt(10));
+		finalPos.add(randomNumber.nextInt(10));
+		shotPos.add(randomNumber.nextInt(10));
+		shotPos.add(randomNumber.nextInt(10));
 			
-			// choose a random space to move to
-			// random place to fire arrow at
+		action = new Action(shotPos, initialPos, finalPos);
 			
-			finalPos.add(randomNumber.nextInt(10), randomNumber.nextInt(10));
-			shotPos.add(randomNumber.nextInt(10), randomNumber.nextInt(10));
+		return action;
 			
-			action = new Action(shotPos, initialPos, finalPos);
-			
-			return action;
-			
-		}
+		//}
 		
 		// change this later
-		while(true);
+		//while(true);
 		
 		// might have to do something about getting the correctly coloured piece
 		// as well as the specific piece we want to move
