@@ -1,5 +1,7 @@
 package ubc.cosc322;
 
+import java.util.*;
+
 public class Agent {
 	private boolean isWhite;
 	private BoardModel model;
@@ -31,8 +33,28 @@ public class Agent {
 	}
 	
 	// Make Random Move
+	// This is for testing need to be configure
+	// Code taken from github
 	private Move randomMove() {
-		
+		Random random = new Random();
+        Move move;
+        int[] queenPosCurrent;
+        int[] queenPosNew;
+        int[] arrowPos;
+        
+        int failNum = 0;
+        do {
+	        String queenColor;
+	        do {
+	        	queenPosCurrent = model.queenPositions.get(random.nextInt(8));
+	        	queenColor = model.getTile(queenPosCurrent);
+	        }while(queenColor.equalsIgnoreCase(isWhite ? BoardModel.POS_MARKED_BLACK : BoardModel.POS_MARKED_WHITE));
+	        
+	        queenPosNew = new int[] {random.nextInt(10), random.nextInt(10)};
+	        arrowPos = new int[] {random.nextInt(10), random.nextInt(10)};
+	        move = new Move(queenPosCurrent, queenPosNew, arrowPos);
+        }while(isValidMove(queenPosCurrent, queenPosNew, arrowPos, model));
+        return move;
 	}
 	
 	
@@ -129,24 +151,45 @@ public class Agent {
 			int starthorizontally = 0;
 			
 			int length = Math.abs(newposition[0] - curposition[0]);
-			
-			if(newposition[0] < curposition[0]) {
-				starthorizontally = newposition[0];
-			}else if(curposition[0] < newposition[0]) {
-				starthorizontally = curposition[0];
+			if((curposition[0] < newposition[0] && curposition[1] < newposition[1]) || (curposition[0] > newposition[0] && curposition[1] > newposition[1])) {
+				if(newposition[0] < curposition[0]) {
+					starthorizontally = newposition[0];
+				}else if(curposition[0] < newposition[0]) {
+					starthorizontally = curposition[0];
+				}
+				
+				if(newposition[1] < curposition[1]) {
+					startvertically = newposition[1];
+				}else if(curposition[1] < newposition[1]) {
+					startvertically = curposition[1];
+				}
+				
+				for(int i = 1; i < length; i++) {
+					int [] temp = new int[]{starthorizontally+i, startvertically+i};
+					if (!model.getTile(temp).equalsIgnoreCase(model.POS_AVAILABLE)) {
+		                return false;
+		            }
+				}
 			}
-			
-			if(newposition[1] < curposition[1]) {
-				startvertically = newposition[1];
-			}else if(curposition[1] < newposition[1]) {
-				startvertically = curposition[1];
-			}
-			
-			for(int i = 1; i < length; i++) {
-				int [] temp = new int[]{starthorizontally+i, startvertically+i};
-				if (!model.getTile(temp).equalsIgnoreCase(model.POS_AVAILABLE)) {
-	                return false;
-	            }
+			// diagonal to northeast (to the right and up) or opposite
+			if((curposition[0] < newposition[0] && curposition[1] < newposition[1]) || (curposition[0] > newposition[0] && curposition[1] < newposition[1])) {
+				if(newposition[0] < curposition[0]) {
+					starthorizontally = newposition[0];
+				}else if(curposition[0] < newposition[0]) {
+					starthorizontally = curposition[0];
+				}
+				
+				if(newposition[1] < curposition[1]) {
+					startvertically = curposition[1];
+				}else if(curposition[1] < newposition[1]) {
+					startvertically = newposition[1];
+				}
+				for(int i = 1; i < length; i++) {
+					int [] temp = new int[]{starthorizontally+i, startvertically-i};
+					if (!model.getTile(temp).equalsIgnoreCase(model.POS_AVAILABLE)) {
+		                return false;
+		            }
+				}
 			}
 		}
 		return true;
