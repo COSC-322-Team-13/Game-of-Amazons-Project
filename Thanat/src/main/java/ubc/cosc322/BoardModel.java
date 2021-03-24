@@ -9,7 +9,7 @@ public class BoardModel {
     public static final String POS_AVAILABLE = "available";
     
     public ArrayList<int[]> queenPositions = new ArrayList<int[]>(8);
-    private String[][] gameBoard;
+    private String[][] gameBoard = null;
     
     public void setTile(int[] position, String occupant) {
         gameBoard[position[0]][position[1]] = occupant;
