@@ -6,36 +6,36 @@ import ygraph.ai.smartfox.games.GameClient;
 
 public class Move {
 	
-	private ArrayList<Integer> queenPosCurrent;
-	private ArrayList<Integer> queenPosNew;
-	private ArrayList<Integer> arrowPos;
+	private int[] queenPosCurrent;
+	private int[] queenPosNew;
+	private int[] arrowPos;
 	
 	
-	public ArrayList<Integer> getQueenPosCurrent() {
+	public int[] getQueenPosCurrent() {
 		return queenPosCurrent;
 	}
 
-	public ArrayList<Integer> getQueenPosNew() {
+	public int[] getQueenPosNew() {
 		return queenPosNew;
 	}
 
-	public ArrayList<Integer> getArrowPos() {
+	public int[] getArrowPos() {
 		return arrowPos;
 	}
 
-	public void setQueenPosCurrent(ArrayList<Integer> queenPosCurrent) {
+	public void setQueenPosCurrent(int[] queenPosCurrent) {
 		this.queenPosCurrent = queenPosCurrent;
 	}
 
-	public void setQueenPosNew(ArrayList<Integer> queenPosNew) {
+	public void setQueenPosNew(int[] queenPosNew) {
 		this.queenPosNew = queenPosNew;
 	}
 
-	public void setArrowPos(ArrayList<Integer> arrowPos) {
+	public void setArrowPos(int[] arrowPos) {
 		this.arrowPos = arrowPos;
 	}
 
-	public Move(ArrayList<Integer> queenPosCurrent, ArrayList<Integer> queenPosNew, ArrayList<Integer> arrowPos) {
+	public Move(int[] queenPosCurrent, int[] queenPosNew, int[] arrowPos) {
 		this.queenPosCurrent = queenPosCurrent;
 		this.queenPosNew = queenPosNew;
 		this.arrowPos = arrowPos;

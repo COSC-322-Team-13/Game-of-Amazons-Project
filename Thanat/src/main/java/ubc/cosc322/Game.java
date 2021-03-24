@@ -7,7 +7,7 @@ import ygraph.ai.smartfox.games.GameClient;
 import ygraph.ai.smartfox.games.GamePlayer;
 import ygraph.ai.smartfox.games.GameMessage;
 
-public class GameCommunication extends GamePlayer{
+public class Game extends GamePlayer{
 	
 	private GameClient gameClient;
 	private String userName;
@@ -16,7 +16,7 @@ public class GameCommunication extends GamePlayer{
     private BaseGameGUI gamegui;
     private boolean isWhite;
     
-    public GameCommunication(String userName, String passwd, int RoomNumber) {
+    public Game(String userName, String passwd, int RoomNumber) {
     	GameClient gameclient = new GameClient(userName, passwd);
     	this.RoomNumber = RoomNumber;
     	this.userName = userName;
