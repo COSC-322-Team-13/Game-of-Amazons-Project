@@ -145,9 +145,9 @@ public class COSC322Test extends GamePlayer{
         int[] arrowTargetArr = new int[2];
         for (int i=0; i < 2; i++)
         {
-        	queenCurrentArr[i] = queenCurrent.get(i).intValue();
-        	queenTargetArr[i] = queenTarget.get(i).intValue();
-        	arrowTargetArr[i] = arrowTarget.get(i).intValue();
+        	queenCurrentArr[i] = queenCurrent.get(i).intValue() - 1;
+        	queenTargetArr[i] = queenTarget.get(i).intValue() - 1;
+        	arrowTargetArr[i] = arrowTarget.get(i).intValue() - 1;
         }
         board.setTile(queenCurrentArr, BoardModel.POS_AVAILABLE);
         if(isWhite == true) {
