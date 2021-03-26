@@ -48,7 +48,8 @@ public class Agent {
 	        do {
 	        	queenPosCurrent = model.queenPositions.get(random.nextInt(8));
 	        	queenColor = model.getTile(queenPosCurrent);
-	        }while(queenColor.equalsIgnoreCase(isWhite ? BoardModel.POS_MARKED_BLACK : BoardModel.POS_MARKED_WHITE));
+	        	// while queen color is not the same with our color
+	        }while(!queenColor.equalsIgnoreCase(isWhite ? BoardModel.POS_MARKED_WHITE : BoardModel.POS_MARKED_BLACK));
 	        
 	        queenPosNew = new int[] {random.nextInt(10), random.nextInt(10)};
 	        arrowPos = new int[] {random.nextInt(10), random.nextInt(10)};
@@ -82,7 +83,7 @@ public class Agent {
 	}
 	
 	private static boolean isOutOfBounds(int[] position) {
-		if(position[0] < 0 || position[0] > 10 || position[1] < 0 || position[1] > 10) {
+		if(position[0] < 0 || position[0] >= 10 || position[1] < 0 || position[1] >= 10) {
 			return false;
 		}else {
 			return true;
@@ -106,91 +107,18 @@ public class Agent {
 		boolean isValid = (position1[0] == position2[0] && position1[1] != position2[1]) || (position1[0] != position2[0] && position1[1] == position2[1]);
         return isValid;
     }
-	
+	// implement with TA suggestion
 	private static boolean validationClearPath(int[] curposition, int[] newposition, BoardModel model) {
-		if(validateIsOrthagonal(curposition, newposition)) {
-			if(curposition[0] == newposition[0] && curposition[1] != newposition[1]) {
-				// vertically
-				int start = 0;
-				int length = Math.abs(newposition[1] - curposition[1]);
-				
-				if(newposition[1] < curposition[1]) {
-					start = newposition[1];
-				}else {
-					start = curposition[1];
-				}
-				
-				for(int i = 1; i < length; i++) {
-					int [] temp = new int[]{curposition[0], start+i};
-					if (!model.getTile(temp).equalsIgnoreCase(model.POS_AVAILABLE)) {
-		                return false;
-		            }
-				}
+		int xdir = (int)Math.signum(newposition[0]-curposition[0]);
+		int ydir = (int)Math.signum(newposition[1]-curposition[1]);
+		int testx = curposition[0] + xdir;
+		int testy = curposition[1] + ydir;
+		while((testx != newposition[0]) || (testy != newposition[1])) {
+			if(!model.getTile(new int[] {testx, testy}).equals(model.POS_AVAILABLE)) {
+				return false;
 			}
-			if(curposition[0] != newposition[0] && curposition[1] == newposition[1]){
-				// horizontal
-				int start = 0;
-				int length = Math.abs(newposition[0] - curposition[0]);
-				
-				if(newposition[0] < curposition[0]) {
-					start = newposition[0];
-				}else {
-					start = curposition[0];
-				}
-				
-				for(int i = 1; i < length; i++) {
-					int [] temp = new int[]{start+i, curposition[1]};
-					if (!model.getTile(temp).equalsIgnoreCase(model.POS_AVAILABLE)) {
-		                return false;
-		            }
-				}
-			}
-		}
-		if(validationIsDiagonal(curposition, newposition)) {
-			int startvertically = 0;
-			int starthorizontally = 0;
-			
-			int length = Math.abs(newposition[0] - curposition[0]);
-			if((curposition[0] < newposition[0] && curposition[1] < newposition[1]) || (curposition[0] > newposition[0] && curposition[1] > newposition[1])) {
-				if(newposition[0] < curposition[0]) {
-					starthorizontally = newposition[0];
-				}else if(curposition[0] < newposition[0]) {
-					starthorizontally = curposition[0];
-				}
-				
-				if(newposition[1] < curposition[1]) {
-					startvertically = newposition[1];
-				}else if(curposition[1] < newposition[1]) {
-					startvertically = curposition[1];
-				}
-				
-				for(int i = 1; i < length; i++) {
-					int [] temp = new int[]{starthorizontally+i, startvertically+i};
-					if (!model.getTile(temp).equalsIgnoreCase(model.POS_AVAILABLE)) {
-		                return false;
-		            }
-				}
-			}
-			// diagonal to northeast (to the right and up) or opposite
-			if((curposition[0] < newposition[0] && curposition[1] < newposition[1]) || (curposition[0] > newposition[0] && curposition[1] < newposition[1])) {
-				if(newposition[0] < curposition[0]) {
-					starthorizontally = newposition[0];
-				}else if(curposition[0] < newposition[0]) {
-					starthorizontally = curposition[0];
-				}
-				
-				if(newposition[1] < curposition[1]) {
-					startvertically = curposition[1];
-				}else if(curposition[1] < newposition[1]) {
-					startvertically = newposition[1];
-				}
-				for(int i = 1; i < length; i++) {
-					int [] temp = new int[]{starthorizontally+i, startvertically-i};
-					if (!model.getTile(temp).equalsIgnoreCase(model.POS_AVAILABLE)) {
-		                return false;
-		            }
-				}
-			}
+			testx += xdir;
+			testy += ydir;
 		}
 		return true;
 	}

@@ -3,10 +3,16 @@ package ubc.cosc322;
 import java.util.*;
 
 public class BoardModel {
-    public static final String POS_MARKED_BLACK = "queen-black";
-    public static final String POS_MARKED_WHITE = "queen-white";
-    public static final String POS_MARKED_ARROW = "arrow";
-    public static final String POS_AVAILABLE = "available";
+	// TA suggest it should be number better than string
+    //public static final String POS_MARKED_BLACK = "queen-black";
+    //public static final String POS_MARKED_WHITE = "queen-white";
+    //public static final String POS_MARKED_ARROW = "arrow";
+    //public static final String POS_AVAILABLE = "available";
+    
+    public static final String POS_MARKED_BLACK = "1";
+    public static final String POS_MARKED_WHITE = "2";
+    public static final String POS_MARKED_ARROW = "4";
+    public static final String POS_AVAILABLE = "0";
     
     public ArrayList<int[]> queenPositions = new ArrayList<int[]>(8);
     private String[][] gameBoard = null;
@@ -56,6 +62,7 @@ public class BoardModel {
     public void moveQueen(int[] position1, int[] position2) {
         setQueen(position2, getTile(position1).equalsIgnoreCase(POS_MARKED_WHITE));
         setTile(position1, POS_AVAILABLE);
+        // Remove from the original position
         for (int i = 0; i < queenPositions.size(); i++) {
             if (queenPositions.get(i)[0] == position1[0] && queenPositions.get(i)[1] == position1[1]) {
                 queenPositions.remove(i);
