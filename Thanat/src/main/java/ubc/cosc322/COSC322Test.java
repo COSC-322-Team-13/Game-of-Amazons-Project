@@ -118,19 +118,25 @@ public class COSC322Test extends GamePlayer{
     			myTurn(agent.pickMove());
     			//need to check
     			//gamegui.updateGameState(msgDetails);
+    			board.printBoard();
+    			
     		}
     		if(messageType.equals(GameMessage.GAME_ACTION_MOVE)) {
         		
         		System.out.println("ENEMY JUST MADE A MOVE");
         		handleOppoentMove(msgDetails);
         		//print Game state
-        		
+        		board.printBoard();
         		// might be the case that we can play right after enemy?
+        		System.out.println("My move!");
         		myTurn(agent.pickMove());
         		//print Game state
         		
+        		
         		//need to check line 129
-        		//gamegui.updateGameState(msgDetails);        		
+        		//gamegui.updateGameState(msgDetails); 
+        		board.printBoard();
+        		
         	}	
     	}
         return true; 	
@@ -163,6 +169,8 @@ public class COSC322Test extends GamePlayer{
     	ArrayList<Integer> queenPosNew = new ArrayList<>(Arrays.asList( move.getQueenPosNew()[0] + 1, move.getQueenPosNew()[1] + 1 ));
     	ArrayList<Integer> arrowPos = new ArrayList<>(Arrays.asList( move.getArrowPos()[0] + 1, move.getArrowPos()[1] + 1 ));
         gameClient.sendMoveMessage(queenPosCurrent, queenPosNew, arrowPos);
+        System.out.println("My move:");
+        System.out.println("Current: " + queenPosCurrent.toString() + " New: " + queenPosNew.toString() + " Arrow: " + arrowPos.toString());
     }
     
     

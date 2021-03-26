@@ -70,4 +70,10 @@ public class BoardModel {
             }
         }
     }
+    
+    public void printBoard() {
+    	for (String[] row : gameBoard) {
+    		System.out.println(Arrays.toString(row));
+    	}
+    }
 }
