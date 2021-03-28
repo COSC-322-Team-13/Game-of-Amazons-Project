@@ -57,6 +57,9 @@ public class BoardModel {
         moveQueen(oldQueenPosition, newQueenPosition);
         setTile(arrowPosition, POS_MARKED_ARROW);
     }
+    public void makeMove(Move move) {
+    	makeMove(move.getQueenPosCurrent(), move.getQueenPosNew(), move.getArrowPos());
+    }
     
     //Move Queen
     public void moveQueen(int[] position1, int[] position2) {

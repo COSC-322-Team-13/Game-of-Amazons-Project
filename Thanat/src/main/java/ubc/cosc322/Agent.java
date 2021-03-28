@@ -61,26 +61,42 @@ public class Agent {
 	
 	// ----- Validation on legal move -------
 	// return false if out of bound
-	private static boolean isValidMove(int[] queenPosCurrent, int[] queenPosNew, int[] arrowPos, BoardModel model) {
+	public static boolean isValidMove(int[] queenPosCurrent, int[] queenPosNew, int[] arrowPos, BoardModel model) {
 		if(validationIsOutOfBounds(queenPosCurrent, queenPosNew, arrowPos) == false) 
 			return false;
 		if(validationPositionOccupied(queenPosNew, arrowPos, model) == false)
 			return false;
 		//Check Queen Movement if it is diagonal or orthagonal
-		if(validationIsDiagonal(queenPosCurrent, queenPosNew) || validateIsOrthagonal(queenPosCurrent, queenPosNew) == false) 
+		if((validationIsDiagonal(queenPosCurrent, queenPosNew) || validateIsOrthagonal(queenPosCurrent, queenPosNew)) == false) 
 			return false;
 		// Check if the path between current queen and new queen is clear
 		if(validationClearPath(queenPosCurrent, queenPosNew, model) == false)
 			return false;
 		
 		//Check arrow Movement if it is diagonal or orthagonal
-		if(validationIsDiagonal(queenPosNew, arrowPos) || validateIsOrthagonal(queenPosNew, arrowPos) == false) 
+		if((validationIsDiagonal(queenPosNew, arrowPos) || validateIsOrthagonal(queenPosNew, arrowPos)) == false) 
 			return false;
 		// Check if the path between new queen and arrow is clear
 		if(validationClearPath(queenPosNew, arrowPos, model) == false)
 			return false;
 		return true;
 	}
+	public static boolean isValidQueenOrArrowMove(int[] posCurrent, int[] posNew, BoardModel model) {
+		if(isOutOfBounds(posCurrent) && isOutOfBounds(posNew) == false) {
+			return false;
+		}
+		if(validationPositionIsOccupied(posNew, model) == false) {
+			return false;
+		}
+		if((validationIsDiagonal(posCurrent, posNew) || validateIsOrthagonal(posCurrent, posNew)) == false ) {
+			return false;
+		}
+		if(validationClearPath(posCurrent, posNew, model) == false) {
+			return false;
+		}
+		return true;
+	}
+	
 	
 	private static boolean isOutOfBounds(int[] position) {
 		if(position[0] < 0 || position[0] >= 10 || position[1] < 0 || position[1] >= 10) {
@@ -129,6 +145,16 @@ public class Agent {
         String arrowSpace = model.getTile(arrowPos);
 
         if (!queenSpace.equals(model.POS_AVAILABLE) || !arrowSpace.equals(model.POS_AVAILABLE)) {
+            return false;
+        }
+
+        return true;
+    }
+    private static boolean validationPositionIsOccupied(int[] position, BoardModel model) {
+
+        String positionSpace = model.getTile(position);
+
+        if (!positionSpace.equals(model.POS_AVAILABLE)) {
             return false;
         }
 

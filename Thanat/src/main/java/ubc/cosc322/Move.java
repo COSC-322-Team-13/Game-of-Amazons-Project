@@ -43,6 +43,10 @@ public class Move {
 		//GameClient.sendMoveMessage(this.queenPosCurrent, this.queenPosNew, this.arrowPos);
 	}
 	
+	public void printMove() {
+		System.out.println("Current Position: " + Arrays.toString(queenPosCurrent) + " New Position: " + Arrays.toString(queenPosNew) + " Arrow Position: " + Arrays.toString(arrowPos));
+	}
+	
 	
 	
 }

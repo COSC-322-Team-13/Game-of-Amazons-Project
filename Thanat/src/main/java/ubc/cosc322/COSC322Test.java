@@ -94,8 +94,10 @@ public class COSC322Test extends GamePlayer{
     	//For a detailed description of the message types and format, 
     	//see the method GamePlayer.handleGameMessage() in the game-client-api document. 
     	//System.out.println(msgDetails);
-//    	if(messageType.equals("cosc322.game-state.board"))
-//            gamegui.setGameState((ArrayList<Integer>) msgDetails.get("game-state"));
+    	if(messageType.equals("cosc322.game-state.board")) {
+            gamegui.setGameState((ArrayList<Integer>) msgDetails.get("game-state"));
+    		board.printBoard();
+    	}
 //        if(messageType.equals("cosc322.game-action.move"))
 //            gamegui.updateGameState(msgDetails);
     	if(messageType.equals(GameMessage.GAME_ACTION_START)) {
@@ -106,6 +108,7 @@ public class COSC322Test extends GamePlayer{
     		
     		isWhite = msgDetails.get("player-white").equals(this.userName);
     		System.out.println(isWhite);
+    		
     		
     		if(isWhite) {
     			// if white do not do anything at first round
@@ -120,24 +123,24 @@ public class COSC322Test extends GamePlayer{
     			//gamegui.updateGameState(msgDetails);
     			board.printBoard();
     			
-    		}
-    		if(messageType.equals(GameMessage.GAME_ACTION_MOVE)) {
-        		
-        		System.out.println("ENEMY JUST MADE A MOVE");
-        		handleOppoentMove(msgDetails);
-        		//print Game state
-        		board.printBoard();
-        		// might be the case that we can play right after enemy?
-        		System.out.println("My move!");
-        		myTurn(agent.pickMove());
-        		//print Game state
-        		
-        		
-        		//need to check line 129
-        		//gamegui.updateGameState(msgDetails); 
-        		board.printBoard();
-        		
-        	}	
+    		}	
+    	}
+    	if(messageType.equals(GameMessage.GAME_ACTION_MOVE)) {
+    		gamegui.updateGameState(msgDetails);
+    		System.out.println("ENEMY JUST MADE A MOVE");
+    		handleOppoentMove(msgDetails);
+    		//print Game state
+    		board.printBoard();
+    		// might be the case that we can play right after enemy?
+    		System.out.println("My move!");
+    		myTurn(agent.pickMove());
+    		//print Game state
+    		
+    		
+    		//need to check line 129
+    		//gamegui.updateGameState(msgDetails); 
+    		board.printBoard();
+    		
     	}
         return true; 	
     }
