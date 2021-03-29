@@ -8,6 +8,7 @@ public class TreeNode {
 	private ArrayList<TreeNode> children;
 	private boolean isTerminal;
 	private int win;
+	private int gameNum;
 	private long simulate = 0;
 	private Move move;
 	private boolean moveOfWhiteColor;
@@ -21,6 +22,7 @@ public class TreeNode {
 		this.parent = parent;
 		this.simulate = 0;
 		this.moveOfWhiteColor = moveOfWhiteColor;
+		this.gameNum = 0;
 	}
 	
 	public void expandTree(TreeNode treenode, boolean isWhite) {

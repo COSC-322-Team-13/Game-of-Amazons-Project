@@ -12,7 +12,7 @@ public class TestMonteCarlo {
 		//System.out.println(model.queenPositions.toString());
 		//getAllPossiblemove(model, false).size()
 		System.out.println(getAllPossiblemove(model, false).size());
-		getAllPossiblemove(model, false).get(555).printMove();
+		getAllPossiblemove(model, false).get(1588).printMove();
 		model2.makeMove(getAllPossiblemove(model, false).get(555));
 		model2.printBoard();
 	}

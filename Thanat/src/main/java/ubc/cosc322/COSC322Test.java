@@ -117,7 +117,7 @@ public class COSC322Test extends GamePlayer{
     		}
     		else if(!isWhite) {
     			
-    			agent = new Agent(true, board, false);
+    			agent = new Agent(false, board, false);
     			myTurn(agent.pickMove());
     			//need to check
     			//gamegui.updateGameState(msgDetails);
@@ -126,6 +126,7 @@ public class COSC322Test extends GamePlayer{
     		}	
     	}
     	if(messageType.equals(GameMessage.GAME_ACTION_MOVE)) {
+    		board.printQueens();
     		gamegui.updateGameState(msgDetails);
     		System.out.println("ENEMY JUST MADE A MOVE");
     		handleOppoentMove(msgDetails);
@@ -168,12 +169,15 @@ public class COSC322Test extends GamePlayer{
     }
     
     public void myTurn(Move move) {
+    	move.printMove();
     	ArrayList<Integer> queenPosCurrent = new ArrayList<>(Arrays.asList( move.getQueenPosCurrent()[0] + 1, move.getQueenPosCurrent()[1] + 1 ));
     	ArrayList<Integer> queenPosNew = new ArrayList<>(Arrays.asList( move.getQueenPosNew()[0] + 1, move.getQueenPosNew()[1] + 1 ));
     	ArrayList<Integer> arrowPos = new ArrayList<>(Arrays.asList( move.getArrowPos()[0] + 1, move.getArrowPos()[1] + 1 ));
         gameClient.sendMoveMessage(queenPosCurrent, queenPosNew, arrowPos);
+        board.makeMove(move);
         System.out.println("My move:");
         System.out.println("Current: " + queenPosCurrent.toString() + " New: " + queenPosNew.toString() + " Arrow: " + arrowPos.toString());
+        gamegui.updateGameState(queenPosCurrent, queenPosNew, arrowPos);
     }
     
     
