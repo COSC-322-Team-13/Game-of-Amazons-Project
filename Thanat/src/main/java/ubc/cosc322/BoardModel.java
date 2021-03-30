@@ -57,8 +57,8 @@ public class BoardModel {
     
     
     public void printBoard() {
-    	for (int[] row : gameBoard) {
-    		System.out.println(Arrays.toString(row));
+    	for (int i = 9; i>= 0; i--) {
+    		System.out.println(Arrays.toString(gameBoard[i]));
     	}
     }
     public void printQueens() {

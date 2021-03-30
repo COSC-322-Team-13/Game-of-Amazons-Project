@@ -169,12 +169,12 @@ public class Agent {
 			for (int i = 0; i < 10; i++) {
 				for (int j = 0; j < 10; j++) {
 					int [] tempNewPos = new int[] {i, j};
-					if(selectedQueens.get(q) != tempNewPos) {
+					if(!Arrays.equals(selectedQueens.get(q),tempNewPos)) {
 						if((Agent.isValidQueenOrArrowMove(selectedQueens.get(q), tempNewPos, model) == true)) {
 							for (int arrowi = 0; arrowi < 10; arrowi++) {
 								for (int arrowj = 0; arrowj < 10; arrowj++) {
 									int [] tempArrow = new int[] {arrowi, arrowj};
-									if(tempNewPos != tempArrow) {
+									if(!Arrays.equals(tempArrow, tempNewPos)) {
 										if((Agent.isValidQueenOrArrowMove(tempNewPos, tempArrow, model) == true)) {
 											Move tempmove = new Move(selectedQueens.get(q), tempNewPos, tempArrow);
 											allMove.add(tempmove);
