@@ -38,24 +38,35 @@ public class Agent {
 	private Move randomMove() {
 		Random random = new Random();
         Move move;
-        int[] queenPosCurrent;
-        int[] queenPosNew;
-        int[] arrowPos;
-        
-        int failNum = 0;
-        do {
-	        String queenColor;
-	        do {
-	        	queenPosCurrent = model.queenPositions.get(random.nextInt(8));
-	        	queenColor = model.getTile(queenPosCurrent);
-	        	// while queen color is not the same with our color
-	        }while(!queenColor.equalsIgnoreCase(isWhite ? BoardModel.POS_MARKED_WHITE : BoardModel.POS_MARKED_BLACK));
-	        
-	        queenPosNew = new int[] {random.nextInt(10), random.nextInt(10)};
-	        arrowPos = new int[] {random.nextInt(10), random.nextInt(10)};
-	        move = new Move(queenPosCurrent, queenPosNew, arrowPos);
-        }while(isValidMove(queenPosCurrent, queenPosNew, arrowPos, model));
-        return move;
+        ArrayList<Move> allMove;
+//        int[] queenPosCurrent;
+//        int[] queenPosNew;
+//        int[] arrowPos;
+//        
+//        int failNum = 0;
+//        do {
+//	        String queenColor;
+//	        do {
+//	        	queenPosCurrent = model.queenPositions.get(random.nextInt(8));
+//	        	queenColor = model.getTile(queenPosCurrent);
+//	        	// while queen color is not the same with our color
+//	        }while(!queenColor.equalsIgnoreCase(isWhite ? BoardModel.POS_MARKED_WHITE : BoardModel.POS_MARKED_BLACK));
+//	        
+//	        queenPosNew = new int[] {random.nextInt(10), random.nextInt(10)};
+//	        arrowPos = new int[] {random.nextInt(10), random.nextInt(10)};
+//	        move = new Move(queenPosCurrent, queenPosNew, arrowPos);
+//        }while(isValidMove(queenPosCurrent, queenPosNew, arrowPos, model));
+        if (isWhite == true) {
+        	allMove = getAllPossiblemove(model, true);
+        }else {
+        	allMove = getAllPossiblemove(model, false);
+        }
+        if(allMove.size() == 0) {
+        	System.out.println("Cannot make any move T_T");
+        }
+        int randomNum = random.nextInt(allMove.size());
+        Move selectedMove = allMove.get(randomNum);
+        return selectedMove;
 	}
 	
 	
@@ -160,4 +171,44 @@ public class Agent {
 
         return true;
     }
+	public static ArrayList<Move> getAllPossiblemove(BoardModel model, boolean whiteTurn){
+		ArrayList<int[]> allQueens = model.queenPositions;
+		//model.printQueens();
+		ArrayList<int[]> selectedQueens = new ArrayList<int[]>();
+		ArrayList<Move> allMove = new ArrayList<Move>();
+		for(int i = 0; i < 10; i++) {
+			for(int j = 0; j < 10; j++) {
+				if(whiteTurn == true) {
+					int[] tempPos = new int[] {i, j};
+					if(model.getTile(tempPos).equalsIgnoreCase(BoardModel.POS_MARKED_WHITE)){
+						selectedQueens.add(tempPos);
+					}
+				}else {
+					int[] tempPos = new int[] {i, j};
+					if(model.getTile(tempPos).equalsIgnoreCase(BoardModel.POS_MARKED_WHITE)){
+						selectedQueens.add(tempPos);
+					}
+				}
+			}
+		}
+		for (int q = 0; q < selectedQueens.size(); q++) {
+			for (int i = 0; i < 10; i++) {
+				for (int j = 0; j < 10; j++) {
+					int [] tempNewPos = new int[] {i, j};
+					if(Agent.isValidQueenOrArrowMove(selectedQueens.get(q), tempNewPos, model) == true) {
+						for (int arrowi = 0; arrowi < 10; arrowi++) {
+							for (int arrowj = 0; arrowj < 10; arrowj++) {
+								int [] tempArrow = new int[] {arrowi, arrowj};
+								if(Agent.isValidQueenOrArrowMove(tempNewPos, tempArrow, model) == true) {
+									Move tempmove = new Move(selectedQueens.get(q), tempNewPos, tempArrow);
+									allMove.add(tempmove);
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		return allMove;
+	}
 }

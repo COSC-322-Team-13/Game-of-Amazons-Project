@@ -8,18 +8,10 @@ public class TestMonteCarlo {
 		// TODO Auto-generated method stub
 		BoardModel model = new BoardModel();
 		BoardModel model2 = new BoardModel();
-		ArrayList<Move> possibleMoves = getAllPossiblemove(model, false);
-		TreeNode root = new TreeNode(model, possibleMoves.get(0), false, null, true);
-		root.expandTree(root, false);
-		for (TreeNode child : root.getChildren()) {
-			child.expandTree(child, false);
-		}
+		TreeNode root = new TreeNode(model, null, false, null, true);
+		monteCarlo m = new monteCarlo(root);
+		TreeNode chosenChild = m.pickNodeToExpand();
 		model.printBoard();
-		//System.out.println(model.queenPositions.toString());
-		//getAllPossiblemove(model, false).size()
-		System.out.println(possibleMoves.size());
-		possibleMoves.get(555).printMove();
-		model2.makeMove(possibleMoves.get(555));
 		model2.printBoard();
 	}
 	
