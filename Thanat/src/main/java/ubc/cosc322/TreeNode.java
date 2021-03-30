@@ -8,12 +8,14 @@ public class TreeNode {
 	private ArrayList<TreeNode> children;
 	private boolean isTerminal;
 	private int win;
-	private int gameNum;
 	private long simulate = 0;
 	private Move move;
 	private boolean moveOfWhiteColor;
+	private int numVisit = 0;
+	private int value = 0;
+	private int ourPlayer;
 	
-	public TreeNode(BoardModel boardState, Move move, boolean isTerminal, TreeNode parent, boolean moveOfWhiteColor) {
+	public TreeNode(BoardModel boardState, Move move, boolean isTerminal, TreeNode parent, int ourPlayer) {
 		this.boardState = boardState;
 		this.move = move;
 		this.isTerminal = isTerminal;
@@ -22,21 +24,19 @@ public class TreeNode {
 		this.parent = parent;
 		this.simulate = 0;
 		this.moveOfWhiteColor = moveOfWhiteColor;
-		this.gameNum = 0;
+		this.value = 0;
+		this.numVisit = 0;
+		this.ourPlayer = ourPlayer;
 	}
 	
-	public void expandTree(TreeNode treenode, boolean isWhite) {
+	public void expandTree(TreeNode treenode, int ourPlayer) {
 		// If node is terminal then return
 		if(treenode.isTerminal == true) {
 			return;
 		}
 		ArrayList<Move> allPossibleMove;
 		// Check if it is white or black
-		if(isWhite == true) {
-			allPossibleMove = TestMonteCarlo.getAllPossiblemove(treenode.boardState, true);
-		}else {
-			allPossibleMove = TestMonteCarlo.getAllPossiblemove(treenode.boardState, false);
-		}
+		allPossibleMove = Agent.getAllPossiblemove(treenode.boardState, ourPlayer);
 		
 		// loop through all possible move
 		for(int i = 0; i < allPossibleMove.size(); i++) {
@@ -45,10 +45,10 @@ public class TreeNode {
 			boardStateTemp.makeMove(tempmove);
 			
 			ArrayList<Move> childrenAllPossibleMove;
-			if(isWhite == true) {
-				childrenAllPossibleMove = TestMonteCarlo.getAllPossiblemove(boardStateTemp, true);
-			}else {
-				childrenAllPossibleMove = TestMonteCarlo.getAllPossiblemove(boardStateTemp, false);
+			if(ourPlayer == 1) {
+				childrenAllPossibleMove = Agent.getAllPossiblemove(boardStateTemp, 2);
+			}else{
+				childrenAllPossibleMove = Agent.getAllPossiblemove(boardStateTemp, 1);
 			}
 			
 			boolean isTerminalTemp;
@@ -58,15 +58,11 @@ public class TreeNode {
 				isTerminalTemp = false;
 			}
 			
-			if(isWhite == true) {
-				TreeNode tempTreeNode = new TreeNode(boardStateTemp, tempmove, isTerminalTemp, this, true);
-				children.add(tempTreeNode);
-			}else {
-				TreeNode tempTreeNode = new TreeNode(boardStateTemp, tempmove, isTerminalTemp, this, false);
-				children.add(tempTreeNode);
-			}
+			TreeNode tempTreeNode = new TreeNode(boardStateTemp, tempmove, isTerminalTemp, this, ourPlayer);
+			children.add(tempTreeNode);
 		}
 	}
+
 	public BoardModel getBoardState() {
 		return boardState;
 	}
@@ -81,5 +77,36 @@ public class TreeNode {
 
 	public void setTerminal(boolean isTerminal) {
 		this.isTerminal = isTerminal;
+	}
+	
+	public int getNumVisit() {
+		return this.numVisit;
+	}
+	
+	public void visitNode() {
+		this.numVisit++;
+	}
+
+	public TreeNode getParent() {
+		return parent;
+	}
+
+
+	public ArrayList<TreeNode> getChildren() {
+		return children;
+	}
+
+
+	public int getValue() {
+		return value;
+	}
+
+	public void setValue(int value) {
+		this.value = value;
+	}
+
+	public int getOurPlayer() {
+		// TODO Auto-generated method stub
+		return ourPlayer;
 	}
 }

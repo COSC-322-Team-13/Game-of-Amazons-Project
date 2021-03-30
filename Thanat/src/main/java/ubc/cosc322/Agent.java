@@ -3,14 +3,14 @@ package ubc.cosc322;
 import java.util.*;
 
 public class Agent {
-	private boolean isWhite;
+	private int ourPlayer;
 	private BoardModel model;
 	private String agentName;
 	private boolean heuristic;
 	
-	public Agent(boolean isWhite, BoardModel model, boolean heuristic) {
+	public Agent(int ourPlayer, BoardModel model, boolean heuristic) {
 		
-		this.isWhite = isWhite;
+		this.ourPlayer = ourPlayer;
 		this.model = model;
 		this.agentName = "team-13-Agent";
 		this.heuristic = heuristic;
@@ -39,28 +39,9 @@ public class Agent {
 		Random random = new Random();
         Move move;
         ArrayList<Move> allMove;
-//        int[] queenPosCurrent;
-//        int[] queenPosNew;
-//        int[] arrowPos;
-//        
-//        int failNum = 0;
-//        do {
-//	        String queenColor;
-//	        do {
-//	        	queenPosCurrent = model.queenPositions.get(random.nextInt(8));
-//	        	queenColor = model.getTile(queenPosCurrent);
-//	        	// while queen color is not the same with our color
-//	        }while(!queenColor.equalsIgnoreCase(isWhite ? BoardModel.POS_MARKED_WHITE : BoardModel.POS_MARKED_BLACK));
-//	        
-//	        queenPosNew = new int[] {random.nextInt(10), random.nextInt(10)};
-//	        arrowPos = new int[] {random.nextInt(10), random.nextInt(10)};
-//	        move = new Move(queenPosCurrent, queenPosNew, arrowPos);
-//        }while(isValidMove(queenPosCurrent, queenPosNew, arrowPos, model));
-        if (isWhite == true) {
-        	allMove = getAllPossiblemove(model, true);
-        }else {
-        	allMove = getAllPossiblemove(model, false);
-        }
+        
+        allMove = getAllPossiblemove(model, ourPlayer);
+        
         if(allMove.size() == 0) {
         	System.out.println("Cannot make any move T_T");
         }
@@ -141,7 +122,7 @@ public class Agent {
 		int testx = curposition[0] + xdir;
 		int testy = curposition[1] + ydir;
 		while((testx != newposition[0]) || (testy != newposition[1])) {
-			if(!model.getTile(new int[] {testx, testy}).equals(model.POS_AVAILABLE)) {
+			if(!(model.getTile(new int[] {testx, testy}) == model.POS_AVAILABLE)) {
 				return false;
 			}
 			testx += xdir;
@@ -152,10 +133,10 @@ public class Agent {
 	// false if it is occupy
     private static boolean validationPositionOccupied(int[] queenPosNew, int[] arrowPos, BoardModel model) {
 
-        String queenSpace = model.getTile(queenPosNew);
-        String arrowSpace = model.getTile(arrowPos);
+        int queenSpace = model.getTile(queenPosNew);
+        int arrowSpace = model.getTile(arrowPos);
 
-        if (!queenSpace.equals(model.POS_AVAILABLE) || !arrowSpace.equals(model.POS_AVAILABLE)) {
+        if (!(queenSpace == model.POS_AVAILABLE) || !(arrowSpace == model.POS_AVAILABLE)) {
             return false;
         }
 
@@ -163,31 +144,24 @@ public class Agent {
     }
     private static boolean validationPositionIsOccupied(int[] position, BoardModel model) {
 
-        String positionSpace = model.getTile(position);
+        int positionSpace = model.getTile(position);
 
-        if (!positionSpace.equals(model.POS_AVAILABLE)) {
+        if (!(positionSpace == model.POS_AVAILABLE)) {
             return false;
         }
 
         return true;
     }
-	public static ArrayList<Move> getAllPossiblemove(BoardModel model, boolean whiteTurn){
-		ArrayList<int[]> allQueens = model.queenPositions;
+	public static ArrayList<Move> getAllPossiblemove(BoardModel model, int ourPlayer){
+		ArrayList<int[]> allQueens = model.getAllQueen();
 		//model.printQueens();
 		ArrayList<int[]> selectedQueens = new ArrayList<int[]>();
 		ArrayList<Move> allMove = new ArrayList<Move>();
 		for(int i = 0; i < 10; i++) {
 			for(int j = 0; j < 10; j++) {
-				if(whiteTurn == true) {
-					int[] tempPos = new int[] {i, j};
-					if(model.getTile(tempPos).equalsIgnoreCase(BoardModel.POS_MARKED_WHITE)){
-						selectedQueens.add(tempPos);
-					}
-				}else {
-					int[] tempPos = new int[] {i, j};
-					if(model.getTile(tempPos).equalsIgnoreCase(BoardModel.POS_MARKED_WHITE)){
-						selectedQueens.add(tempPos);
-					}
+				int[] tempPos = new int[] {i, j};
+				if(model.getTile(tempPos) == ourPlayer){
+					selectedQueens.add(tempPos);
 				}
 			}
 		}
@@ -195,13 +169,17 @@ public class Agent {
 			for (int i = 0; i < 10; i++) {
 				for (int j = 0; j < 10; j++) {
 					int [] tempNewPos = new int[] {i, j};
-					if(Agent.isValidQueenOrArrowMove(selectedQueens.get(q), tempNewPos, model) == true) {
-						for (int arrowi = 0; arrowi < 10; arrowi++) {
-							for (int arrowj = 0; arrowj < 10; arrowj++) {
-								int [] tempArrow = new int[] {arrowi, arrowj};
-								if(Agent.isValidQueenOrArrowMove(tempNewPos, tempArrow, model) == true) {
-									Move tempmove = new Move(selectedQueens.get(q), tempNewPos, tempArrow);
-									allMove.add(tempmove);
+					if(selectedQueens.get(q) != tempNewPos) {
+						if((Agent.isValidQueenOrArrowMove(selectedQueens.get(q), tempNewPos, model) == true)) {
+							for (int arrowi = 0; arrowi < 10; arrowi++) {
+								for (int arrowj = 0; arrowj < 10; arrowj++) {
+									int [] tempArrow = new int[] {arrowi, arrowj};
+									if(tempNewPos != tempArrow) {
+										if((Agent.isValidQueenOrArrowMove(tempNewPos, tempArrow, model) == true)) {
+											Move tempmove = new Move(selectedQueens.get(q), tempNewPos, tempArrow);
+											allMove.add(tempmove);
+										}
+									}
 								}
 							}
 						}
