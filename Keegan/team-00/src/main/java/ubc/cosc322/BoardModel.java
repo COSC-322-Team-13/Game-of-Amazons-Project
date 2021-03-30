@@ -15,6 +15,8 @@ public class BoardModel {
     public static final String POS_AVAILABLE = "0";
     
     public ArrayList<int[]> queenPositions = new ArrayList<int[]>(8);
+    public ArrayList<int[]> blackQueenPositions = new ArrayList<int[]>(4);
+    public ArrayList<int[]> whiteQueenPositions = new ArrayList<int[]>(4);
     private String[][] gameBoard = null;
     
     public void setTile(int[] position, String occupant) {
@@ -28,8 +30,10 @@ public class BoardModel {
     private void setQueen(int[] position, boolean isWhite) {
     	if(isWhite == true) {
     		setTile(position, POS_MARKED_WHITE);
+    		whiteQueenPositions.add(position);
     	}else {
     		setTile(position, POS_MARKED_BLACK);
+    		blackQueenPositions.add(position);
         }
         queenPositions.add(position);
     }
@@ -42,15 +46,15 @@ public class BoardModel {
                 gameBoard[i][j] = POS_AVAILABLE;
             }
         }
-        setQueen(new int[]{0, 3}, true);
-        setQueen(new int[]{0, 6}, true);
-        setQueen(new int[]{3, 0}, true);
-        setQueen(new int[]{3, 9}, true);
+        setQueen(new int[]{0, 3}, false);
+        setQueen(new int[]{0, 6}, false);
+        setQueen(new int[]{3, 0}, false);
+        setQueen(new int[]{3, 9}, false);
         
-        setQueen(new int[]{6, 0}, false);
-        setQueen(new int[]{6, 9}, false);
-        setQueen(new int[]{9, 3}, false);
-        setQueen(new int[]{9, 6}, false);
+        setQueen(new int[]{6, 0}, true);
+        setQueen(new int[]{6, 9}, true);
+        setQueen(new int[]{9, 3}, true);
+        setQueen(new int[]{9, 6}, true);
     }
     
     public void makeMove(int[] oldQueenPosition, int[] newQueenPosition, int[] arrowPosition) {
@@ -77,6 +81,12 @@ public class BoardModel {
     public void printBoard() {
     	for (String[] row : gameBoard) {
     		System.out.println(Arrays.toString(row));
+    	}
+    }
+    public void printQueens() {
+    	System.out.println("All Queens Position: ");
+    	for(int i = 0; i < queenPositions.size(); i++) {
+    		System.out.print(getTile(queenPositions.get(i)) + ":" + Arrays.toString(queenPositions.get(i)) + " ");
     	}
     }
 }

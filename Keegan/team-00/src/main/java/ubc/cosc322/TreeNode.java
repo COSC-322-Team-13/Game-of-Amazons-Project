@@ -13,6 +13,8 @@ public class TreeNode {
 	private boolean moveOfWhiteColor;
 	private int numVisit = 0;
 	private int value = 0;
+	private int gameNum = 0;
+	private boolean leaf;
 	
 	public TreeNode(BoardModel boardState, Move move, boolean isTerminal, TreeNode parent, boolean moveOfWhiteColor) {
 		this.boardState = boardState;
@@ -25,9 +27,12 @@ public class TreeNode {
 		this.moveOfWhiteColor = moveOfWhiteColor;
 		this.value = 0;
 		this.numVisit = 0;
+		leaf = false;
 	}
 	
 	public void expandTree(TreeNode treenode, boolean isWhite) {
+		// This node is no longer a leaf node so change boolean leaf to false
+		treenode.leaf = false;
 		// If node is terminal then return
 		if(treenode.isTerminal == true) {
 			return;
@@ -62,9 +67,11 @@ public class TreeNode {
 			
 			if(isWhite == true) {
 				TreeNode tempTreeNode = new TreeNode(boardStateTemp, tempmove, isTerminalTemp, this, true);
+				
 				children.add(tempTreeNode);
 			}else {
 				TreeNode tempTreeNode = new TreeNode(boardStateTemp, tempmove, isTerminalTemp, this, false);
+				tempTreeNode.leaf = true;
 				children.add(tempTreeNode);
 			}
 		}
@@ -111,6 +118,8 @@ public class TreeNode {
 		this.value = value;
 	}
 
-	
+	public boolean getLeaf() {
+		return this.leaf;
+	}
 	
 }
