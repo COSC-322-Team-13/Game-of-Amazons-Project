@@ -81,6 +81,7 @@ public class COSC322Test extends GamePlayer{
     		}else {
     			board.ourPlayer = BoardModel.POS_MARKED_BLACK;
     		}
+    		// heuristic = true to use monte carlo tree search
     		agent = new Agent(board.ourPlayer, board, false);
     		System.out.println("We are playing as :" + board.ourPlayer);
     		if (isWhite == false) {

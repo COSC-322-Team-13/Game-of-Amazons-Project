@@ -81,4 +81,15 @@ public class BoardModel {
     	}
     	return tempArray;
     }
+    public BoardModel getCopy() {
+    	BoardModel tempBoard = new BoardModel();
+    	tempBoard.gameBoard = new int[10][10];
+    	for (int i = 0; i < 10; i++) {
+            for (int j = 0; j < 10; j++) {
+            	tempBoard.gameBoard[i][j] = this.gameBoard[i][j];
+            }
+        }
+    	tempBoard.ourPlayer = this.ourPlayer;
+    	return tempBoard;
+    }
 }

@@ -11,14 +11,12 @@ public class TestMonteCarlo {
 		model.printBoard();
 		//System.out.println(model.queenPositions.toString());
 		//getAllPossiblemove(model, false).size()
-		System.out.println(Agent.getAllPossiblemove(model, 2).size());
-		ArrayList<Move> allmove = Agent.getAllPossiblemove(model, 2);
-		Move move = Agent.getAllPossiblemove(model, 2).get(1500);
-		for(int i = 0; i < allmove.size(); i++) {
-			if(allmove.get(i).getQueenPosNew() == allmove.get(i).getArrowPos()) {
-				allmove.get(i).printMove();
-			}
-		}
+		//System.out.println(Agent.getAllPossiblemove(model, 2).size());
+		//ArrayList<Move> allmove = Agent.getAllPossiblemove(model, 2);
+		//Move move = Agent.getAllPossiblemove(model, 2).get(1500);
+		MonteCarlo mcl = new MonteCarlo(model, 2);
+		Move move = mcl.getBestMove();
+		
 		model2.makeMove(move);
 		move.printMove();
 		model2.printBoard();
