@@ -51,7 +51,7 @@ public class MonteCarlo {
 			
 			
 		}else {
-			System.out.println("No Move canbe made!");
+			System.out.println("No Move can be made!");
 			return null;
 		}
 	}

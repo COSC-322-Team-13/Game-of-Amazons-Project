@@ -32,7 +32,9 @@ public class TreeNode {
 		if (this.getSimulated() == 0) {
 			return 0;
 		}
-		double uct = this.win / this.simulated;
+		double winNum = (double)this.win;
+		double simNum = (double)this.simulated;
+		double uct = winNum / simNum;
 		return uct;
 	}
 	public ArrayList<TreeNode> getChildren() {
