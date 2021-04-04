@@ -2,79 +2,66 @@ package ubc.cosc322;
 
 import java.util.*;
 
-public class monteCarlo implements Runnable {
+public class monteCarlo {
 
-	private TreeNode currentNode;
+	private TreeNode root;
 	private BoardModel boardState;
 	private int ourPlayer;
-
-	@Override
-	public void run() {
-		this.expand(currentNode);
-		TreeNode bestMove = null;
-		// TODO Auto-generated method stub
-		while (true) {
-			boolean firstNode = false;
-			for (TreeNode child : this.currentNode.getChildren()) {
-				if (!firstNode) {
-					bestMove = child;
-				} else {
-					double bestUCT = bestMove.getUCT();
-					double maybeBest = child.getUCT();
-					if (maybeBest > bestUCT) {
-						bestMove = child;
-					}
-				}
-			}
-			
-		}
-	}
 
 	public monteCarlo(BoardModel boardState, int ourPlayer) {
 		this.boardState = boardState;
 		this.ourPlayer = ourPlayer;
-		this.currentNode = new TreeNode(boardState);
+		this.root = new TreeNode(boardState);
 	}
 
-	public Move getBestMove() {
-		if (expand(currentNode)) {
-			int winNum = 0;
-			System.out.println("Node got expanded!");
-			ArrayList<TreeNode> children = currentNode.getChildren();
-
-			System.out.println("Total of " + children.size() + " nodes has created");
-			// will implement thread -> Maybe set up time period
-			// Loop through all of children one time( for now and will implement thread to
-			// loop this many many times)
-			for (int itr = 0; itr < 30; itr++) {
-				for (int i = 0; i < children.size(); i++) {
-					int winner = simulate(children.get(i));
-					// save result to the node
-					if (winner == ourPlayer) {
-						children.get(i).setWin(children.get(i).getWin() + 1);
-						winNum++;
-					}
-					children.get(i).setSimulated(children.get(i).getSimulated() + 1);
-				}
+	public Move move() {
+		final int threadcount = 5;
+		long end = System.currentTimeMillis() + 3000;
+		expand(root);
+		ArrayList<TreeNode> children = root.getChildren();
+		Thread[] threadArray = new Thread[threadcount];
+		monteCarloRunning[] running = new monteCarloRunning[threadcount];
+		int childPerThread = children.size() / threadcount;
+		int extraChildren = children.size() % threadcount;
+		for (int i = 0; i < threadcount; i++) {
+			TreeNode rootOfThread = new TreeNode (this.boardState);
+			int start = childPerThread * i;
+			int endI = childPerThread * (i + 1);
+			rootOfThread.setChildren(new ArrayList<> (children.subList(start, endI)));
+			if (i == 0) {
+				start = children.size() - extraChildren;
+				endI = children.size();
+				rootOfThread.setChildren(new ArrayList<> (children.subList(start, endI)));
 			}
-			System.out.println("I won " + winNum + " times!");
-
-			double maxUCT = 0;
-			Move maxUCTmove = children.get(0).getMove();
-
-			for (int i = 0; i < children.size(); i++) {
-				double tempUCT = children.get(i).getUCT();
-				if (tempUCT > maxUCT) {
-					maxUCT = tempUCT;
-					maxUCTmove = children.get(i).getMove();
-				}
-			}
-			return maxUCTmove;
-
-		} else {
-			System.out.println("No Move can be made!");
-			return null;
+			monteCarloRunning run = new monteCarloRunning(end, rootOfThread);
+			running[i] = run;
+			Thread thread = new Thread(run);
+			threadArray[i] = thread;
+			thread.start();
 		}
+		
+		for (int i = 0; i < threadcount; i++) {
+			try {
+				threadArray[i].join();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		
+		return getBestMove(root);
+	}
+	public Move getBestMove(TreeNode root) {
+		Move best = null;
+		int mostWin = -2;
+		
+		for (TreeNode child: root.getChildren()) {
+			if (child.getWin() > mostWin) {
+				mostWin = child.getWin();
+				best = child.getMove();
+			}
+		}
+		return best;
+		
 	}
 
 	public boolean expand(TreeNode treenode) {
@@ -138,23 +125,62 @@ public class monteCarlo implements Runnable {
 		// System.out.println("Winner is " + winner);
 		return winner;
 	}
+
 	
-	// Once a node has been simulated we need to backpropogate the value. if we won we back propogate 10 else back propogate 0 and increment the visits of all parent nodes
-	public void backPropogate(TreeNode simulated, boolean weWon) {
-		if (weWon) {
-			while (simulated.getParent() != null) {
-				simulated.setValue(10);
-				simulated.visit();
-				simulated = simulated.getParent();
+	public void backPropogate(TreeNode simulated, int winner) {
+		while (simulated != null) {
+			if (winner == ourPlayer) {
+				simulated.incrementWin();
 			}
-		} else {
-			while (simulated.getParent() != null) {
-				simulated.setValue(0);
-				simulated.visit();
-				simulated = simulated.getParent();
-			}
+			simulated.setSimulated();
 		}
-	
+	}
+
+	private class monteCarloRunning implements Runnable {
+		long end;
+		TreeNode rootNode;
+		
+		public monteCarloRunning(long end, TreeNode rootNode) {
+			this.end = end;
+			this.rootNode = rootNode;
+		}
+
+		@Override
+		public void run() {
+			while (System.currentTimeMillis() < end) {
+				TreeNode iterator = getBestLeafChild(root);
+				expand(iterator);
+				ArrayList<TreeNode> children = iterator.getChildren();
+				Random random = new Random();
+				TreeNode randomChild = children.get(random.nextInt(children.size()));
+				if (randomChild == null) {
+					if (ourPlayer == 1) backPropogate(iterator, 2);
+					else backPropogate(iterator, 1);
+					continue;
+				}
+				int winner = simulate(randomChild);
+				backPropogate(randomChild, winner);
+			}
+
+		}
+
+	}
+
+	public TreeNode getBestLeafChild(TreeNode root) {
+		TreeNode iterator = root;
+		while (!iterator.getChildren().isEmpty()) {
+			double maxUCB1 = Double.MIN_VALUE;
+			TreeNode max = null;
+			for (TreeNode child : iterator.getChildren()) {
+				double UCB1 = child.getUCB1();
+				if (UCB1 > maxUCB1) {
+					maxUCB1 = UCB1;
+					max = child;
+				}
+			}
+			iterator = max;
+		}
+		return iterator;
 	}
 
 }

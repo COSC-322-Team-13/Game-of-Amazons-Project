@@ -15,7 +15,7 @@ public class TestMonteCarlo {
 		//ArrayList<Move> allmove = Agent.getAllPossiblemove(model, 2);
 		//Move move = Agent.getAllPossiblemove(model, 2).get(1500);
 		monteCarlo mcl = new monteCarlo(model, 2);
-		Move move = mcl.getBestMove();
+		Move move = mcl.move();
 		
 		model2.makeMove(move);
 		move.printMove();

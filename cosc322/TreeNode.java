@@ -9,8 +9,6 @@ public class TreeNode {
 	private int simulated;
 	private Move move;
 	private TreeNode parent;
-	private int value;
-	private int numVisits;
 
 	// For children Node
 	public TreeNode(BoardModel boardState, Move move, TreeNode parent) {
@@ -20,9 +18,8 @@ public class TreeNode {
 		this.win = 0;
 		this.simulated = 0;
 		this.children = new ArrayList<TreeNode>();
-		this.value = 0;
-		this.numVisits = 0;
 	}
+
 	// initial node
 	public TreeNode(BoardModel boardState) {
 		this.boardState = boardState;
@@ -32,53 +29,69 @@ public class TreeNode {
 		this.simulated = 0;
 		this.children = new ArrayList<TreeNode>();
 	}
+
 	public double getUCT() {
 		if (this.getSimulated() == 0) {
 			return 0;
 		}
-		double winNum = (double)this.win;
-		double simNum = (double)this.simulated;
+		double winNum = (double) this.win;
+		double simNum = (double) this.simulated;
 		double uct = winNum / simNum;
 		return uct;
 	}
+
 	public ArrayList<TreeNode> getChildren() {
 		return children;
 	}
-	public void setWin(int win) {
-		this.win = win;
+
+	public void incrementWin() {
+		this.win++;
 	}
-	public void setSimulated(int simulated) {
-		this.simulated = simulated;
+
+	public void setSimulated() {
+		this.simulated++;
 	}
+
 	public void setChildren(ArrayList<TreeNode> children) {
 		this.children = children;
 	}
+
 	public int getWin() {
 		return win;
 	}
+
 	public int getSimulated() {
 		return simulated;
 	}
+
 	public Move getMove() {
 		return move;
 	}
+
 	public TreeNode getParent() {
 		return parent;
 	}
+
 	public BoardModel getBoardState() {
 		return boardState;
 	}
-	public int getValue() {
-		return value;
-	}
-	public void setValue(int value) {
-		this.value += value;
-	}
-	public int getNumVisits() {
-		return numVisits;
-	}
-	public void visit() {
-		this.numVisits++;
+
+	public double getUCB1() {
+		//if there are no visits to the node return infinity
+		if (this.simulated == 0) {
+			return Double.MAX_VALUE;
+		} else {
+		double averageWin = this.win / this.simulated;
+		double sqrt2 = Math.sqrt(2);
+		double foo = Math.sqrt(Math.log(this.parent.getSimulated()) / this.simulated);
+		return averageWin + sqrt2 * foo;
+		}
 	}
 	
+	public void addChildren(ArrayList<TreeNode> children) {
+		this.children.addAll(children);
+	}
+
+
+
 }
