@@ -15,8 +15,7 @@ public class monteCarlo {
 	}
 
 	public Move move() {
-		final int threadcount = 5;
-		long end = System.currentTimeMillis() + 3000;
+		final int threadcount = 4;
 		expand(root);
 		ArrayList<TreeNode> children = root.getChildren();
 		Thread[] threadArray = new Thread[threadcount];
@@ -33,20 +32,22 @@ public class monteCarlo {
 				endI = children.size();
 				rootOfThread.setChildren(new ArrayList<> (children.subList(start, endI)));
 			}
-			monteCarloRunning run = new monteCarloRunning(end, rootOfThread);
+			monteCarloRunning run = new monteCarloRunning(rootOfThread);
 			running[i] = run;
 			Thread thread = new Thread(run);
 			threadArray[i] = thread;
 			thread.start();
 		}
-		
 		for (int i = 0; i < threadcount; i++) {
 			try {
-				threadArray[i].join();
+				System.out.println("Attempting to join thread " + i);
+				threadArray[i].join(4000);
 			} catch (Exception e) {
+				threadArray[i].interrupt();
 				e.printStackTrace();
 			}
 		}
+		System.out.println("All threads rejoined");
 		
 		return getBestMove(root);
 	}
@@ -137,18 +138,17 @@ public class monteCarlo {
 	}
 
 	private class monteCarloRunning implements Runnable {
-		long end;
 		TreeNode rootNode;
 		
-		public monteCarloRunning(long end, TreeNode rootNode) {
-			this.end = end;
+		public monteCarloRunning(TreeNode rootNode) {
 			this.rootNode = rootNode;
 		}
 
 		@Override
 		public void run() {
-			while (System.currentTimeMillis() < end) {
-				TreeNode iterator = getBestLeafChild(root);
+			while (true) {
+				System.out.println("Thread has begun running");
+				TreeNode iterator = getBestLeafChild(this.rootNode);
 				expand(iterator);
 				ArrayList<TreeNode> children = iterator.getChildren();
 				Random random = new Random();
@@ -171,7 +171,8 @@ public class monteCarlo {
 		while (!iterator.getChildren().isEmpty()) {
 			double maxUCB1 = Double.MIN_VALUE;
 			TreeNode max = null;
-			for (TreeNode child : iterator.getChildren()) {
+			ArrayList<TreeNode> children = iterator.getChildren();
+			for (TreeNode child : children) {
 				double UCB1 = child.getUCB1();
 				if (UCB1 > maxUCB1) {
 					maxUCB1 = UCB1;
