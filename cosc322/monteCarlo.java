@@ -40,11 +40,14 @@ public class monteCarlo {
 		}
 		for (int i = 0; i < threadcount; i++) {
 			try {
-				System.out.println("Attempting to join thread " + i);
-				threadArray[i].join(4000);
+				System.out.println("Attempting to join Thread " + i);
+				if (i == 0) threadArray[i].join(6000);
+				else threadArray[i].join(4000);
 			} catch (Exception e) {
 				threadArray[i].interrupt();
 				e.printStackTrace();
+			} finally {
+				System.out.println("Thread " + i + " joined successfully");
 			}
 		}
 		System.out.println("All threads rejoined");
@@ -172,7 +175,8 @@ public class monteCarlo {
 			double maxUCB1 = Double.MIN_VALUE;
 			TreeNode max = null;
 			ArrayList<TreeNode> children = iterator.getChildren();
-			for (TreeNode child : children) {
+			for (int i = 0; i < children.size(); i++) {
+				TreeNode child = children.get(i);
 				double UCB1 = child.getUCB1();
 				if (UCB1 > maxUCB1) {
 					maxUCB1 = UCB1;
