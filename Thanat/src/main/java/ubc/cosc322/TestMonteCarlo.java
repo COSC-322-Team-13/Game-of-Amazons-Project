@@ -1,5 +1,6 @@
 package ubc.cosc322;
 
+import java.sql.Time;
 import java.util.*;
 
 public class TestMonteCarlo {
@@ -15,8 +16,12 @@ public class TestMonteCarlo {
 		//ArrayList<Move> allmove = Agent.getAllPossiblemove(model, 2);
 		//Move move = Agent.getAllPossiblemove(model, 2).get(1500);
 		MonteCarlo mcl = new MonteCarlo(model, 2);
-		Move move = mcl.getBestMove();
+		long start = System.currentTimeMillis();
+		Move move = mcl.getBestMoveThread();
+		long end = System.currentTimeMillis();
+		long elapsedTime = (end - start)/1000;
 		
+		System.out.println("It took " + elapsedTime + "s to run simulation.");
 		model2.makeMove(move);
 		move.printMove();
 		model2.printBoard();

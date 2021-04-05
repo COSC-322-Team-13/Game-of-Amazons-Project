@@ -13,6 +13,93 @@ public class MonteCarlo {
 		this.ourPlayer = ourPlayer;
 		this.currentNode = new TreeNode(boardState);
 	}
+	public Move getBestMoveThread() {
+		int THREADNUM = 8;
+		if(expand(currentNode)) {
+			int winNum = 0;
+			System.out.println("Node got expanded!");
+			ArrayList<TreeNode> children = currentNode.getChildren();
+			
+			System.out.println("Total of " + children.size() + " nodes has created");
+			
+			int threadChildCount = children.size() / THREADNUM;
+			int extraChildCount = children.size() % THREADNUM;
+			
+			Thread[] threads = new Thread[THREADNUM];
+			//int[] winSum = new int[THREADNUM];
+			
+			for (int tdIndex = 0; tdIndex < THREADNUM; tdIndex++) {
+				int startIdx = threadChildCount * (tdIndex - 1);
+				int endIdx = threadChildCount * tdIndex;
+				if(tdIndex == 0) {
+					if(extraChildCount != 0) {
+						startIdx = children.size() - extraChildCount;
+						endIdx = children.size();
+					}else {
+						startIdx = children.size() - threadChildCount;
+						endIdx = children.size();
+					}
+				}
+				ArrayList<TreeNode> tempArray = new ArrayList<>(children.subList(startIdx, endIdx));
+				System.out.println("Thread Number " + tdIndex + " have index " + startIdx + " to " + endIdx);
+				SimulationRun simThread = new SimulationRun(tempArray);
+				Thread thread = new Thread(simThread);
+				threads[tdIndex] = thread;
+				thread.start();
+				
+			}
+			for (int i = 0; i < THREADNUM; i++) {
+				try {
+					threads[i].join();
+				} catch (Exception e) {
+					System.out.println(e);
+				}
+			}
+			
+			double maxUCT = 0;
+			Move maxUCTmove = children.get(0).getMove();
+			
+			int winSum = 0;
+			int itrSum = 0;
+			for(int i = 0; i < children.size(); i++) {
+				winSum += children.get(i).getWin();
+				itrSum += children.get(i).getSimulated();
+				double tempUCT = children.get(i).getUCT();
+				if(tempUCT > maxUCT) {
+					maxUCT = tempUCT;
+					maxUCTmove = children.get(i).getMove();
+				}
+			}
+			System.out.println("I won " + winSum + " times from " + itrSum + " rounds.");
+			return maxUCTmove;
+		}else {
+			System.out.println("No Move can be made!");
+			return null;
+		}
+		
+	}
+	
+	private class SimulationRun implements Runnable {
+		ArrayList<TreeNode> childrenSubset;
+
+		public SimulationRun(ArrayList<TreeNode> childrenSubset) {
+			this.childrenSubset = childrenSubset;
+		}
+
+		@Override
+		public void run() {
+			for(int itr = 0; itr < 30; itr++) {
+				for(int i = 0; i < childrenSubset.size(); i++) {
+					int winner = simulate(childrenSubset.get(i));
+					// save result to the node
+					if(winner == ourPlayer) {
+						childrenSubset.get(i).setWin(childrenSubset.get(i).getWin() + 1);
+					}
+					childrenSubset.get(i).setSimulated(childrenSubset.get(i).getSimulated() + 1);
+				}
+			}
+		}
+	}
 	
 	public Move getBestMove() {
 		if(expand(currentNode)) {
