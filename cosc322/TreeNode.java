@@ -81,9 +81,9 @@ public class TreeNode {
 		if (this.simulated == 0) {
 			return Double.MAX_VALUE;
 		} else {
-		double averageWin = this.win / this.simulated;
+		double averageWin = (double)this.win / (double)this.simulated;
 		double sqrt2 = Math.sqrt(2);
-		double foo = Math.sqrt(Math.log(this.parent.getSimulated()) / this.simulated);
+		double foo = Math.sqrt(Math.log((double)this.parent.getSimulated()) / (double)this.simulated);
 		return averageWin + sqrt2 * foo;
 		}
 	}
