@@ -18,19 +18,20 @@ public class monteCarlo {
 		final int threadcount = 4;
 		expand(root);
 		ArrayList<TreeNode> children = root.getChildren();
+		Thread dummy = new Thread();
 		Thread[] threadArray = new Thread[threadcount];
 		monteCarloRunning[] running = new monteCarloRunning[threadcount];
 		int childPerThread = children.size() / threadcount;
 		int extraChildren = children.size() % threadcount;
 		for (int i = 0; i < threadcount; i++) {
-			TreeNode rootOfThread = new TreeNode (this.boardState);
+			TreeNode rootOfThread = new TreeNode(this.boardState);
 			int start = childPerThread * i;
 			int endI = childPerThread * (i + 1);
-			rootOfThread.setChildren(new ArrayList<> (children.subList(start, endI)));
+			rootOfThread.setChildren(new ArrayList<>(children.subList(start, endI)));
 			if (i == 0) {
 				start = children.size() - extraChildren;
 				endI = children.size();
-				rootOfThread.setChildren(new ArrayList<> (children.subList(start, endI)));
+				rootOfThread.setChildren(new ArrayList<>(children.subList(start, endI)));
 			}
 			monteCarloRunning run = new monteCarloRunning(rootOfThread);
 			running[i] = run;
@@ -41,31 +42,42 @@ public class monteCarlo {
 		for (int i = 0; i < threadcount; i++) {
 			try {
 				System.out.println("Attempting to join Thread " + i);
-				if (i == 0) threadArray[i].join(6000);
-				else threadArray[i].join(4000);
+				threadArray[i].join(6000);
 			} catch (Exception e) {
 				threadArray[i].interrupt();
 				e.printStackTrace();
 			} finally {
+				threadArray[i].interrupt();
+				threadArray[i].stop();
 				System.out.println("Thread " + i + " joined successfully");
 			}
 		}
 		System.out.println("All threads rejoined");
-		
+		if (dummy.isAlive())
+			System.out.println("Dummy is alive");
+		for (int i = 0; i < threadcount; i++) {
+			if (threadArray[i].isAlive()) {
+				System.out.println("Thread " + i + " is still alive, we will now try to stop it again");
+				threadArray[i].stop();
+				System.out.println("We tried stopping the thread, now is Thread " + i
+						+ " still alive? My sources say this is " + threadArray[i].isAlive());
+			}
+		}
 		return getBestMove(root);
 	}
+
 	public Move getBestMove(TreeNode root) {
 		Move best = null;
 		int mostWin = -2;
-		
-		for (TreeNode child: root.getChildren()) {
+
+		for (TreeNode child : root.getChildren()) {
 			if (child.getWin() > mostWin) {
 				mostWin = child.getWin();
 				best = child.getMove();
 			}
 		}
 		return best;
-		
+
 	}
 
 	public boolean expand(TreeNode treenode) {
@@ -130,7 +142,6 @@ public class monteCarlo {
 		return winner;
 	}
 
-	
 	public void backPropogate(TreeNode simulated, int winner) {
 		while (simulated != null) {
 			if (winner == ourPlayer) {
@@ -142,29 +153,29 @@ public class monteCarlo {
 
 	private class monteCarloRunning implements Runnable {
 		TreeNode rootNode;
-		
+
 		public monteCarloRunning(TreeNode rootNode) {
 			this.rootNode = rootNode;
 		}
 
 		@Override
 		public void run() {
-			while (true) {
-				System.out.println("Thread has begun running");
+			while (!Thread.currentThread().isInterrupted()) {
 				TreeNode iterator = getBestLeafChild(this.rootNode);
 				expand(iterator);
 				ArrayList<TreeNode> children = iterator.getChildren();
 				Random random = new Random();
 				TreeNode randomChild = children.get(random.nextInt(children.size()));
 				if (randomChild == null) {
-					if (ourPlayer == 1) backPropogate(iterator, 2);
-					else backPropogate(iterator, 1);
+					if (ourPlayer == 1)
+						backPropogate(iterator, 2);
+					else
+						backPropogate(iterator, 1);
 					continue;
 				}
 				int winner = simulate(randomChild);
 				backPropogate(randomChild, winner);
 			}
-
 		}
 
 	}

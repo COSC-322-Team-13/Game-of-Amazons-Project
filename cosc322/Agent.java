@@ -34,6 +34,11 @@ public class Agent {
 		}
 	}
 	
+	//Accessible random move
+	public Move pRandomMove() {
+		return randomMove();
+	}
+	
 	// Make Random Move
 	// This is for testing need to be configure
 	// Code taken from github

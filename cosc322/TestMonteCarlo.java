@@ -16,7 +16,14 @@ public class TestMonteCarlo {
 		//Move move = Agent.getAllPossiblemove(model, 2).get(1500);
 		monteCarlo mcl = new monteCarlo(model, 2);
 		Move move = mcl.move();
-		
+		Agent enemy = new Agent(1, model, false);
+		Move eMove = enemy.pRandomMove();
+		model2.makeMove(move);
+		model2.makeMove(eMove);
+		move.printMove();
+		model2.printBoard();
+		mcl = new monteCarlo (model2, 2);
+		move = mcl.move();
 		model2.makeMove(move);
 		move.printMove();
 		model2.printBoard();
