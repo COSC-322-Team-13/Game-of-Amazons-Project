@@ -18,15 +18,15 @@ public class TestMonteCarlo {
 		Move move = mcl.move();
 		Agent enemy = new Agent(1, model, false);
 		Move eMove = enemy.pRandomMove();
-		model2.makeMove(move);
-		model2.makeMove(eMove);
-		move.printMove();
-		model2.printBoard();
-		mcl = new monteCarlo (model2, 2);
-		move = mcl.move();
-		model2.makeMove(move);
-		move.printMove();
-		model2.printBoard();
+		for (int i = 0; i < 50; i++) {
+			model2.makeMove(move);
+			model2.makeMove(eMove);
+			move.printMove();
+			model2.printBoard();
+			mcl = new monteCarlo(model2, 2);
+			eMove = enemy.pRandomMove();
+			move = mcl.move();
+		}
 	}
 
 }
