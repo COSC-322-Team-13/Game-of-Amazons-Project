@@ -35,10 +35,12 @@ public class MonteCarlo {
 					ITERATIONNUM = 15;
 				}else if(children.size() < 1000 && children.size() >= 500) {
 					ITERATIONNUM = 50;
-				}else if(children.size() < 500 && children.size() >= 100){
-					ITERATIONNUM = 80;
-				}else {
+				}else if(children.size() < 500 && children.size() >= 250){
+					ITERATIONNUM = 100;
+				}else if(children.size() < 250 && children.size() >= 100) {
 					ITERATIONNUM = 200;
+				}else {
+					ITERATIONNUM = 300;
 				}
 				
 				System.out.println("There will be a total of " + ITERATIONNUM + " simulations.");
@@ -56,7 +58,7 @@ public class MonteCarlo {
 						}
 					}
 					ArrayList<TreeNode> tempArray = new ArrayList<>(children.subList(startIdx, endIdx));
-					System.out.println("Thread Number " + tdIndex + " have index " + startIdx + " to " + endIdx);
+					//System.out.println("Thread Number " + tdIndex + " have index " + startIdx + " to " + endIdx);
 					SimulationRun simThread = new SimulationRun(tempArray, ITERATIONNUM);
 					Thread thread = new Thread(simThread);
 					threads[tdIndex] = thread;

@@ -26,8 +26,12 @@ public class Agent {
 	
 	public Move pickMove() {
 		if(heuristic == true) {
+			long start = System.currentTimeMillis();
 			MonteCarlo mcl = new MonteCarlo(model, ourPlayer);
 			Move move = mcl.getBestMoveThread();
+			long end = System.currentTimeMillis();
+			long elapsedTime = (end - start)/1000;
+			System.out.println("It took " + elapsedTime + "s to run this simulation.");
 			return move;
 		}else {
 			return randomMove();
