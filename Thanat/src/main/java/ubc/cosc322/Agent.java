@@ -27,7 +27,7 @@ public class Agent {
 	public Move pickMove() {
 		if(heuristic == true) {
 			MonteCarlo mcl = new MonteCarlo(model, ourPlayer);
-			Move move = mcl.getBestMove();
+			Move move = mcl.getBestMoveThread();
 			return move;
 		}else {
 			return randomMove();

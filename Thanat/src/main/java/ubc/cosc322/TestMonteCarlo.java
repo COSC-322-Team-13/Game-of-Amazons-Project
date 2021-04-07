@@ -25,6 +25,16 @@ public class TestMonteCarlo {
 		model2.makeMove(move);
 		move.printMove();
 		model2.printBoard();
+		
+		MonteCarlo mcl2 = new MonteCarlo(model2, 2);
+		long start2 = System.currentTimeMillis();
+		Move move2 = mcl2.getBestMoveThread();
+		long end2 = System.currentTimeMillis();
+		long elapsedTime2 = (end2 - start2)/1000;
+		System.out.println("It took " + elapsedTime2 + "s to run simulation.");
+		model2.makeMove(move2);
+		move2.printMove();
+		model2.printBoard();
 	}
 
 }

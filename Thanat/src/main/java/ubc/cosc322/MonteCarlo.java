@@ -15,6 +15,7 @@ public class MonteCarlo {
 	}
 	public Move getBestMoveThread() {
 		int THREADNUM = 8;
+		int ITERATIONNUM;
 		if(expand(currentNode)) {
 			int winNum = 0;
 			System.out.println("Node got expanded!");
@@ -22,56 +23,95 @@ public class MonteCarlo {
 			
 			System.out.println("Total of " + children.size() + " nodes has created");
 			
-			int threadChildCount = children.size() / THREADNUM;
-			int extraChildCount = children.size() % THREADNUM;
-			
-			Thread[] threads = new Thread[THREADNUM];
-			//int[] winSum = new int[THREADNUM];
-			
-			for (int tdIndex = 0; tdIndex < THREADNUM; tdIndex++) {
-				int startIdx = threadChildCount * (tdIndex - 1);
-				int endIdx = threadChildCount * tdIndex;
-				if(tdIndex == 0) {
-					if(extraChildCount != 0) {
-						startIdx = children.size() - extraChildCount;
-						endIdx = children.size();
-					}else {
-						startIdx = children.size() - threadChildCount;
-						endIdx = children.size();
+			// if number of node are more than 8 then use multithreading
+			if(children.size() >= 8) {
+				
+				int threadChildCount = children.size() / THREADNUM;
+				int extraChildCount = children.size() % THREADNUM;
+				
+				Thread[] threads = new Thread[THREADNUM];
+				//int[] winSum = new int[THREADNUM];
+				if(children.size() >= 1000) {
+					ITERATIONNUM = 15;
+				}else if(children.size() < 1000 && children.size() >= 500) {
+					ITERATIONNUM = 50;
+				}else if(children.size() < 500 && children.size() >= 100){
+					ITERATIONNUM = 80;
+				}else {
+					ITERATIONNUM = 200;
+				}
+				
+				System.out.println("There will be a total of " + ITERATIONNUM + " simulations.");
+				
+				for (int tdIndex = 0; tdIndex < THREADNUM; tdIndex++) {
+					int startIdx = threadChildCount * (tdIndex - 1);
+					int endIdx = threadChildCount * tdIndex;
+					if(tdIndex == 0) {
+						if(extraChildCount != 0) {
+							startIdx = children.size() - extraChildCount;
+							endIdx = children.size();
+						}else {
+							startIdx = children.size() - threadChildCount;
+							endIdx = children.size();
+						}
+					}
+					ArrayList<TreeNode> tempArray = new ArrayList<>(children.subList(startIdx, endIdx));
+					System.out.println("Thread Number " + tdIndex + " have index " + startIdx + " to " + endIdx);
+					SimulationRun simThread = new SimulationRun(tempArray, ITERATIONNUM);
+					Thread thread = new Thread(simThread);
+					threads[tdIndex] = thread;
+					thread.start();
+					
+				}
+				for (int i = 0; i < THREADNUM; i++) {
+					try {
+						threads[i].join();
+					} catch (Exception e) {
+						System.out.println(e);
 					}
 				}
-				ArrayList<TreeNode> tempArray = new ArrayList<>(children.subList(startIdx, endIdx));
-				System.out.println("Thread Number " + tdIndex + " have index " + startIdx + " to " + endIdx);
-				SimulationRun simThread = new SimulationRun(tempArray);
-				Thread thread = new Thread(simThread);
-				threads[tdIndex] = thread;
-				thread.start();
 				
-			}
-			for (int i = 0; i < THREADNUM; i++) {
-				try {
-					threads[i].join();
-				} catch (Exception e) {
-					System.out.println(e);
+				double maxUCT = 0;
+				Move maxUCTmove = children.get(0).getMove();
+				
+				int winSum = 0;
+				int itrSum = 0;
+				for(int i = 0; i < children.size(); i++) {
+					winSum += children.get(i).getWin();
+					itrSum += children.get(i).getSimulated();
+					double tempUCT = children.get(i).getUCT();
+					if(tempUCT > maxUCT) {
+						maxUCT = tempUCT;
+						maxUCTmove = children.get(i).getMove();
+					}
 				}
-			}
-			
-			double maxUCT = 0;
-			Move maxUCTmove = children.get(0).getMove();
-			
-			int winSum = 0;
-			int itrSum = 0;
-			for(int i = 0; i < children.size(); i++) {
-				winSum += children.get(i).getWin();
-				itrSum += children.get(i).getSimulated();
-				double tempUCT = children.get(i).getUCT();
-				if(tempUCT > maxUCT) {
-					maxUCT = tempUCT;
-					maxUCTmove = children.get(i).getMove();
+				System.out.println("I won " + winSum + " times from " + itrSum + " rounds.");
+				return maxUCTmove;
+			}else {
+				// if there are less than 8 node then used single thread.
+				for(int itr = 0; itr < 500; itr++) {
+					for(int i = 0; i < children.size(); i++) {
+						int winner = simulate(children.get(i));
+						// save result to the node
+						if(winner == ourPlayer) {
+							children.get(i).setWin(children.get(i).getWin() + 1);
+							winNum++;
+						}
+						children.get(i).setSimulated(children.get(i).getSimulated() + 1);
+					}
 				}
+				double maxUCT = 0;
+				Move maxUCTmove = children.get(0).getMove();
+				
+				for(int i = 0; i < children.size(); i++) {
+					double tempUCT = children.get(i).getUCT();
+					if(tempUCT > maxUCT) {
+						maxUCT = tempUCT;
+						maxUCTmove = children.get(i).getMove();
+					}
+				}
+				return maxUCTmove;
 			}
-			System.out.println("I won " + winSum + " times from " + itrSum + " rounds.");
-			return maxUCTmove;
 		}else {
 			System.out.println("No Move can be made!");
 			return null;
@@ -81,14 +121,16 @@ public class MonteCarlo {
 	
 	private class SimulationRun implements Runnable {
 		ArrayList<TreeNode> childrenSubset;
+		int IterationNum;
 
-		public SimulationRun(ArrayList<TreeNode> childrenSubset) {
+		public SimulationRun(ArrayList<TreeNode> childrenSubset, int IterationNum) {
 			this.childrenSubset = childrenSubset;
+			this.IterationNum = IterationNum;
 		}
 
 		@Override
 		public void run() {
-			for(int itr = 0; itr < 30; itr++) {
+			for(int itr = 0; itr < IterationNum; itr++) {
 				for(int i = 0; i < childrenSubset.size(); i++) {
 					int winner = simulate(childrenSubset.get(i));
 					// save result to the node
