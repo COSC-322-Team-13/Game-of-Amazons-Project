@@ -36,11 +36,11 @@ public class MonteCarlo {
 				}else if(children.size() < 1000 && children.size() >= 500) {
 					ITERATIONNUM = 50;
 				}else if(children.size() < 500 && children.size() >= 250){
-					ITERATIONNUM = 100;
-				}else if(children.size() < 250 && children.size() >= 100) {
 					ITERATIONNUM = 200;
+				}else if(children.size() < 250 && children.size() >= 100) {
+					ITERATIONNUM = 400;
 				}else {
-					ITERATIONNUM = 300;
+					ITERATIONNUM = 800;
 				}
 				
 				System.out.println("There will be a total of " + ITERATIONNUM + " simulations.");
@@ -116,6 +116,7 @@ public class MonteCarlo {
 			}
 		}else {
 			System.out.println("No Move can be made!");
+			System.exit(0);
 			return null;
 		}
 		
