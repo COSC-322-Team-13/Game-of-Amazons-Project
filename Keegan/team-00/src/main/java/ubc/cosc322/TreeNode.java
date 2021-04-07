@@ -3,123 +3,95 @@ package ubc.cosc322;
 import java.util.ArrayList;
 
 public class TreeNode {
-	private BoardModel boardState;
-	private TreeNode parent;
 	private ArrayList<TreeNode> children;
-	private boolean isTerminal;
+	private BoardModel boardState;
 	private int win;
-	private long simulate = 0;
+	private int simulated;
 	private Move move;
-	private boolean moveOfWhiteColor;
-	private int numVisit = 0;
-	private int value = 0;
-	private int gameNum = 0;
-	private boolean leaf;
-	
-	public TreeNode(BoardModel boardState, Move move, boolean isTerminal, TreeNode parent, boolean moveOfWhiteColor) {
+	private TreeNode parent;
+
+	// For children Node
+	public TreeNode(BoardModel boardState, Move move, TreeNode parent) {
 		this.boardState = boardState;
 		this.move = move;
-		this.isTerminal = isTerminal;
-		this.win = 0;
-		this.children = new ArrayList<TreeNode>();
 		this.parent = parent;
-		this.simulate = 0;
-		this.moveOfWhiteColor = moveOfWhiteColor;
-		this.value = 0;
-		this.numVisit = 0;
-		leaf = false;
-	}
-	
-	public void expandTree(TreeNode treenode, boolean isWhite) {
-		// This node is no longer a leaf node so change boolean leaf to false
-		treenode.leaf = false;
-		// If node is terminal then return
-		if(treenode.isTerminal == true) {
-			return;
-		}
-		ArrayList<Move> allPossibleMove;
-		// Check if it is white or black
-		if(isWhite == true) {
-			allPossibleMove = TestMonteCarlo.getAllPossiblemove(treenode.boardState, true);
-		}else {
-			allPossibleMove = TestMonteCarlo.getAllPossiblemove(treenode.boardState, false);
-		}
-		
-		// loop through all possible move
-		for(int i = 0; i < allPossibleMove.size(); i++) {
-			Move tempmove = allPossibleMove.get(i);
-			BoardModel boardStateTemp = boardState;
-			boardStateTemp.makeMove(tempmove);
-			
-			ArrayList<Move> childrenAllPossibleMove;
-			if(isWhite == true) {
-				childrenAllPossibleMove = TestMonteCarlo.getAllPossiblemove(boardStateTemp, true);
-			}else {
-				childrenAllPossibleMove = TestMonteCarlo.getAllPossiblemove(boardStateTemp, false);
-			}
-			
-			boolean isTerminalTemp;
-			if(childrenAllPossibleMove.size() == 0) {
-				isTerminalTemp = true;
-			}else {
-				isTerminalTemp = false;
-			}
-			
-			if(isWhite == true) {
-				TreeNode tempTreeNode = new TreeNode(boardStateTemp, tempmove, isTerminalTemp, this, true);
-				
-				children.add(tempTreeNode);
-			}else {
-				TreeNode tempTreeNode = new TreeNode(boardStateTemp, tempmove, isTerminalTemp, this, false);
-				tempTreeNode.leaf = true;
-				children.add(tempTreeNode);
-			}
-		}
-	}
-	public BoardModel getBoardState() {
-		return boardState;
+		this.win = 0;
+		this.simulated = 0;
+		this.children = new ArrayList<TreeNode>();
 	}
 
-	public boolean isTerminal() {
-		return isTerminal;
-	}
-
-	public void setBoardState(BoardModel boardState) {
+	// initial node
+	public TreeNode(BoardModel boardState) {
 		this.boardState = boardState;
+		this.move = null;
+		this.parent = null;
+		this.win = 0;
+		this.simulated = 0;
+		this.children = new ArrayList<TreeNode>();
 	}
 
-	public void setTerminal(boolean isTerminal) {
-		this.isTerminal = isTerminal;
+	public double getUCT() {
+		if (this.getSimulated() == 0) {
+			return 0;
+		}
+		double winNum = (double) this.win;
+		double simNum = (double) this.simulated;
+		double uct = winNum / simNum;
+		return uct;
 	}
-	
-	public int getNumVisit() {
-		return this.numVisit;
+
+	public ArrayList<TreeNode> getChildren() {
+		return children;
 	}
-	
-	public void visitNode() {
-		this.numVisit++;
+
+	public void incrementWin() {
+		this.win++;
+	}
+
+	public void setSimulated() {
+		this.simulated++;
+	}
+
+	public void setChildren(ArrayList<TreeNode> children) {
+		this.children = children;
+	}
+
+	public int getWin() {
+		return win;
+	}
+
+	public int getSimulated() {
+		return simulated;
+	}
+
+	public Move getMove() {
+		return move;
 	}
 
 	public TreeNode getParent() {
 		return parent;
 	}
 
-
-	public ArrayList<TreeNode> getChildren() {
-		return children;
+	public BoardModel getBoardState() {
+		return boardState;
 	}
 
-
-	public int getValue() {
-		return value;
-	}
-
-	public void setValue(int value) {
-		this.value = value;
-	}
-
-	public boolean getLeaf() {
-		return this.leaf;
+	public double getUCB1() {
+		//if there are no visits to the node return infinity
+		if (this.simulated == 0) {
+			return Double.MAX_VALUE;
+		} else {
+		double averageWin = (double)this.win / (double)this.simulated;
+		double sqrt2 = Math.sqrt(2);
+		double foo = Math.sqrt(Math.log((double)this.parent.getSimulated()) / (double)this.simulated);
+		return averageWin + sqrt2 * foo;
+		}
 	}
 	
+	public void addChildren(ArrayList<TreeNode> children) {
+		this.children.addAll(children);
+	}
+
+
+
 }

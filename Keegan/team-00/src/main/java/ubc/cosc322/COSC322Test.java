@@ -1,3 +1,4 @@
+
 package ubc.cosc322;
 
 import java.util.ArrayList;
@@ -63,84 +64,44 @@ public class COSC322Test extends GamePlayer{
     	//and implement the method getGameGUI() accordingly
     	this.gamegui = new BaseGameGUI(this);
     }
- 
-
-
-    @Override
-    public void onLogin() {
-//    	System.out.println("Congratualations!!! "
-//    			+ "I am called because the server indicated that the login is successfully");
-//    	System.out.println("The next step is to find a room and join it: "
-//    			+ "the gameClient instance created in my constructor knows how!");
-//    	GameClient gclient = getGameClient();
-//    	List<Room> gamerooms = gclient.getRoomList();
-//    	for (Room room : gamerooms) {
-//            System.out.println(room);
-//        }
-//    	String roomToJoin = "Yellow Lake";
-//    	gclient.joinRoom(roomToJoin);
-    	userName = gameClient.getUserName();
-    	if(gamegui != null) {
-    	gamegui.setRoomInformation(gameClient.getRoomList());
-    	}
-    }
 
     @Override
     public boolean handleGameMessage(String messageType, Map<String, Object> msgDetails) {
-    	//This method will be called by the GameClient when it receives a game-related message
-    	//from the server.
-	
-    	//For a detailed description of the message types and format, 
-    	//see the method GamePlayer.handleGameMessage() in the game-client-api document. 
-    	//System.out.println(msgDetails);
-    	if(messageType.equals("cosc322.game-state.board")) {
-            gamegui.setGameState((ArrayList<Integer>) msgDetails.get("game-state"));
-    		board.printBoard();
-    	}
-//        if(messageType.equals("cosc322.game-action.move"))
-//            gamegui.updateGameState(msgDetails);
-    	if(messageType.equals(GameMessage.GAME_ACTION_START)) {
-    		
-    		System.out.println("This is a test, we received GAME_ACTION_START " +
-    				"and we will find out if we received WHITE or BLACK" + '\n' + "so we know which " +
-    				"pieces to move. We will now print out TRUE or FALSE for isWhite");
-    		
-    		isWhite = msgDetails.get("player-white").equals(this.userName);
-    		System.out.println(isWhite);
-    		
-    		
-    		if(isWhite) {
-    			// if white do not do anything at first round
-    			agent = new Agent(true, board, false);
-    			//myTurn(agent.chooseAction());    			
-    		}
-    		else if(!isWhite) {
-    			
-    			agent = new Agent(false, board, false);
-    			myTurn(agent.pickMove());
-    			//need to check
-    			//gamegui.updateGameState(msgDetails);
-    			board.printBoard();
-    			
-    		}	
-    	}
-    	if(messageType.equals(GameMessage.GAME_ACTION_MOVE)) {
+    	if(messageType.equalsIgnoreCase("cosc322.game-state.board")) {
+    		ArrayList<Integer> gameState = (ArrayList<Integer>) msgDetails.get("game-state");
     		board.printQueens();
-    		gamegui.updateGameState(msgDetails);
-    		System.out.println("ENEMY JUST MADE A MOVE");
+    		board.printBoard();
+    		gamegui.setGameState(gameState);
+    		return true;
+    	}
+    	if(messageType.equalsIgnoreCase("cosc322.game-action.start")) {
+    		isWhite = msgDetails.get("player-white").equals(this.userName);
+    		if(isWhite == true) {
+    			board.ourPlayer = BoardModel.POS_MARKED_WHITE;
+    		}else {
+    			board.ourPlayer = BoardModel.POS_MARKED_BLACK;
+    		}
+    		// heuristic = true to use monte carlo tree search
+    		agent = new Agent(board.ourPlayer, board, false);
+    		System.out.println("We are playing as :" + board.ourPlayer);
+    		if (isWhite == false) {
+    			System.out.println("Game Start!!");
+    			System.out.println("My agent is picking a move.");
+    			Move thismove = agent.pickMove();
+        		myTurn(thismove);
+        		board.printQueens();
+        		board.printBoard();
+    		}
+    	}
+    	if(messageType.equalsIgnoreCase("cosc322.game-action.move")) {
     		handleOppoentMove(msgDetails);
-    		//print Game state
-    		board.printBoard();
-    		// might be the case that we can play right after enemy?
-    		System.out.println("My move!");
-    		myTurn(agent.pickMove());
-    		//print Game state
-    		
-    		
-    		//need to check line 129
-    		//gamegui.updateGameState(msgDetails); 
+    		board.printQueens();
     		board.printBoard();
     		
+    		Move thismove = agent.pickMove();
+    		myTurn(thismove);
+    		board.printQueens();
+    		board.printBoard();
     	}
         return true; 	
     }
@@ -158,17 +119,11 @@ public class COSC322Test extends GamePlayer{
         	queenTargetArr[i] = queenTarget.get(i).intValue() - 1;
         	arrowTargetArr[i] = arrowTarget.get(i).intValue() - 1;
         }
-        board.setTile(queenCurrentArr, BoardModel.POS_AVAILABLE);
-        if(isWhite == true) {
-        	board.setTile(queenTargetArr, BoardModel.POS_MARKED_BLACK);
-        }else {
-        	board.setTile(queenTargetArr, BoardModel.POS_MARKED_WHITE);
-        }
-        board.setTile(arrowTargetArr, BoardModel.POS_MARKED_ARROW);
+        gamegui.updateGameState(queenCurrent, queenTarget, arrowTarget);
+        board.makeMove(queenCurrentArr, queenTargetArr, arrowTargetArr);
     }
     
     public void myTurn(Move move) {
-    	move.printMove();
     	ArrayList<Integer> queenPosCurrent = new ArrayList<>(Arrays.asList( move.getQueenPosCurrent()[0] + 1, move.getQueenPosCurrent()[1] + 1 ));
     	ArrayList<Integer> queenPosNew = new ArrayList<>(Arrays.asList( move.getQueenPosNew()[0] + 1, move.getQueenPosNew()[1] + 1 ));
     	ArrayList<Integer> arrowPos = new ArrayList<>(Arrays.asList( move.getArrowPos()[0] + 1, move.getArrowPos()[1] + 1 ));
@@ -178,7 +133,16 @@ public class COSC322Test extends GamePlayer{
         System.out.println("Current: " + queenPosCurrent.toString() + " New: " + queenPosNew.toString() + " Arrow: " + arrowPos.toString());
         gamegui.updateGameState(queenPosCurrent, queenPosNew, arrowPos);
     }
+
     
+    
+    @Override
+    public void onLogin() {
+    	userName = gameClient.getUserName();
+    	if(gamegui != null) {
+    	gamegui.setRoomInformation(gameClient.getRoomList());
+    	}
+    }
     
     @Override
     public String userName() {

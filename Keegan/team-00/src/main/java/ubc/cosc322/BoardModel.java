@@ -9,84 +9,87 @@ public class BoardModel {
     //public static final String POS_MARKED_ARROW = "arrow";
     //public static final String POS_AVAILABLE = "available";
     
-    public static final String POS_MARKED_BLACK = "1";
-    public static final String POS_MARKED_WHITE = "2";
-    public static final String POS_MARKED_ARROW = "4";
-    public static final String POS_AVAILABLE = "0";
+    public static final int POS_MARKED_BLACK = 1;
+    public static final int POS_MARKED_WHITE = 2;
+    public static final int POS_MARKED_ARROW = 4;
+    public static final int POS_AVAILABLE = 0;
     
-    public ArrayList<int[]> queenPositions = new ArrayList<int[]>(8);
-    public ArrayList<int[]> blackQueenPositions = new ArrayList<int[]>(4);
-    public ArrayList<int[]> whiteQueenPositions = new ArrayList<int[]>(4);
-    private String[][] gameBoard = null;
+    public int ourPlayer = -1;
     
-    public void setTile(int[] position, String occupant) {
+    private int[][] gameBoard = null;
+    
+    public void setTile(int[] position, int occupant) {
         gameBoard[position[0]][position[1]] = occupant;
     }
     
-    public String getTile(int[] position) {
+    public int getTile(int[] position) {
         return gameBoard[position[0]][position[1]];
     }
     
-    private void setQueen(int[] position, boolean isWhite) {
-    	if(isWhite == true) {
-    		setTile(position, POS_MARKED_WHITE);
-    		whiteQueenPositions.add(position);
-    	}else {
-    		setTile(position, POS_MARKED_BLACK);
-    		blackQueenPositions.add(position);
-        }
-        queenPositions.add(position);
-    }
-    
     public BoardModel() {
-        gameBoard = new String[10][10];
+        gameBoard = new int[10][10];
         // Create Array of Board
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 10; j++) {
                 gameBoard[i][j] = POS_AVAILABLE;
             }
         }
-        setQueen(new int[]{0, 3}, false);
-        setQueen(new int[]{0, 6}, false);
-        setQueen(new int[]{3, 0}, false);
-        setQueen(new int[]{3, 9}, false);
+        setTile(new int[]{0, 3}, POS_MARKED_WHITE);
+        setTile(new int[]{0, 6}, POS_MARKED_WHITE);
+        setTile(new int[]{3, 0}, POS_MARKED_WHITE);
+        setTile(new int[]{3, 9}, POS_MARKED_WHITE);
         
-        setQueen(new int[]{6, 0}, true);
-        setQueen(new int[]{6, 9}, true);
-        setQueen(new int[]{9, 3}, true);
-        setQueen(new int[]{9, 6}, true);
+        setTile(new int[]{6, 0}, POS_MARKED_BLACK);
+        setTile(new int[]{6, 9}, POS_MARKED_BLACK);
+        setTile(new int[]{9, 3}, POS_MARKED_BLACK);
+        setTile(new int[]{9, 6}, POS_MARKED_BLACK);
     }
     
     public void makeMove(int[] oldQueenPosition, int[] newQueenPosition, int[] arrowPosition) {
-        moveQueen(oldQueenPosition, newQueenPosition);
+        int color = getTile(oldQueenPosition);
+        setTile(oldQueenPosition, POS_AVAILABLE);
+        setTile(newQueenPosition, color);
         setTile(arrowPosition, POS_MARKED_ARROW);
     }
     public void makeMove(Move move) {
     	makeMove(move.getQueenPosCurrent(), move.getQueenPosNew(), move.getArrowPos());
     }
     
-    //Move Queen
-    public void moveQueen(int[] position1, int[] position2) {
-        setQueen(position2, getTile(position1).equalsIgnoreCase(POS_MARKED_WHITE));
-        setTile(position1, POS_AVAILABLE);
-        // Remove from the original position
-        for (int i = 0; i < queenPositions.size(); i++) {
-            if (queenPositions.get(i)[0] == position1[0] && queenPositions.get(i)[1] == position1[1]) {
-                queenPositions.remove(i);
-                break;
-            }
-        }
-    }
     
     public void printBoard() {
-    	for (String[] row : gameBoard) {
-    		System.out.println(Arrays.toString(row));
+    	for (int i = 9; i>= 0; i--) {
+    		System.out.println(Arrays.toString(gameBoard[i]));
     	}
     }
     public void printQueens() {
     	System.out.println("All Queens Position: ");
-    	for(int i = 0; i < queenPositions.size(); i++) {
-    		System.out.print(getTile(queenPositions.get(i)) + ":" + Arrays.toString(queenPositions.get(i)) + " ");
+    	ArrayList<int[]> allQueen = getAllQueen();
+    	for(int i = 0; i < allQueen.size(); i++) {
+    		System.out.print(getTile(allQueen.get(i)) + ": " + Arrays.toString(allQueen.get(i)) + " ");
     	}
+    	System.out.println();
+    }
+    public ArrayList<int[]> getAllQueen(){
+    	ArrayList<int[]> tempArray = new ArrayList<int[]>();
+    	for(int i = 0; i < 10; i++) {
+    		for(int j = 0; j < 10; j++) {
+    			int[] temp = new int[] {i, j};
+    			if(getTile(temp) == POS_MARKED_BLACK || getTile(temp) == POS_MARKED_WHITE) {
+    				tempArray.add(temp);
+    			}
+    		}
+    	}
+    	return tempArray;
+    }
+    public BoardModel getCopy() {
+    	BoardModel tempBoard = new BoardModel();
+    	tempBoard.gameBoard = new int[10][10];
+    	for (int i = 0; i < 10; i++) {
+            for (int j = 0; j < 10; j++) {
+            	tempBoard.gameBoard[i][j] = this.gameBoard[i][j];
+            }
+        }
+    	tempBoard.ourPlayer = this.ourPlayer;
+    	return tempBoard;
     }
 }
