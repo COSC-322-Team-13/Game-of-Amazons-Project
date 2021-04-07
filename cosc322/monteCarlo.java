@@ -42,7 +42,8 @@ public class monteCarlo {
 		for (int i = 0; i < threadcount; i++) {
 			try {
 				System.out.println("Attempting to join Thread " + i);
-				threadArray[i].join(6000);
+				if (i == 0) threadArray[i].join(20000);
+				else threadArray[i].join(100);
 			} catch (Exception e) {
 				threadArray[i].interrupt();
 				e.printStackTrace();
@@ -72,6 +73,7 @@ public class monteCarlo {
 
 		for (TreeNode child : root.getChildren()) {
 			if (child.getWin() > mostWin) {
+				System.out.println(mostWin + " " + child.getWin());
 				mostWin = child.getWin();
 				best = child.getMove();
 			}
